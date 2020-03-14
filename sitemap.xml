@@ -4,14 +4,51 @@
   
   <url>
     <loc>/categories/</loc>
+    <lastmod>2020-03-13T22:23:10+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/developement/</loc>
+    <lastmod>2020-03-13T22:23:10+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/developement/</loc>
+    <lastmod>2020-03-13T22:23:10+09:00</lastmod>
   </url>
   
   <url>
     <loc>/</loc>
+    <lastmod>2020-03-13T22:23:10+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/bakery_mark_1/</loc>
+    <lastmod>2020-03-13T22:23:10+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/</loc>
+    <lastmod>2020-03-13T22:23:10+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/radiosity/</loc>
+    <lastmod>2020-03-13T22:23:10+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/rendering/</loc>
+    <lastmod>2020-03-13T22:23:10+09:00</lastmod>
   </url>
   
   <url>
     <loc>/tags/</loc>
+    <lastmod>2020-03-13T22:23:10+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/about/</loc>
   </url>
   
 </urlset>
