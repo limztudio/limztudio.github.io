@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on LimZtudio</title>
-    <link>/categories/</link>
+    <link>limztudio.github.io/categories/</link>
     <description>Recent content in Categories on LimZtudio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 13 Mar 2020 22:23:10 +0900</lastBuildDate>
     
-	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="limztudio.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Developement</title>
-      <link>/categories/developement/</link>
+      <link>limztudio.github.io/categories/developement/</link>
       <pubDate>Fri, 13 Mar 2020 22:23:10 +0900</pubDate>
       
-      <guid>/categories/developement/</guid>
+      <guid>limztudio.github.io/categories/developement/</guid>
       <description></description>
     </item>
     

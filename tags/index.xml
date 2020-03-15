@@ -2,39 +2,39 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on LimZtudio</title>
-    <link>/tags/</link>
+    <link>limztudio.github.io/tags/</link>
     <description>Recent content in Tags on LimZtudio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 13 Mar 2020 22:23:10 +0900</lastBuildDate>
     
-	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="limztudio.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Developement</title>
-      <link>/tags/developement/</link>
+      <link>limztudio.github.io/tags/developement/</link>
       <pubDate>Fri, 13 Mar 2020 22:23:10 +0900</pubDate>
       
-      <guid>/tags/developement/</guid>
+      <guid>limztudio.github.io/tags/developement/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Radiosity</title>
-      <link>/tags/radiosity/</link>
+      <link>limztudio.github.io/tags/radiosity/</link>
       <pubDate>Fri, 13 Mar 2020 22:23:10 +0900</pubDate>
       
-      <guid>/tags/radiosity/</guid>
+      <guid>limztudio.github.io/tags/radiosity/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Rendering</title>
-      <link>/tags/rendering/</link>
+      <link>limztudio.github.io/tags/rendering/</link>
       <pubDate>Fri, 13 Mar 2020 22:23:10 +0900</pubDate>
       
-      <guid>/tags/rendering/</guid>
+      <guid>limztudio.github.io/tags/rendering/</guid>
       <description></description>
     </item>
     
