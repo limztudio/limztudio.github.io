@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Rendering on LimZtudio</title>
-    <link>limztudio.github.io/tags/rendering/</link>
+    <link>/tags/rendering/</link>
     <description>Recent content in Rendering on LimZtudio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 13 Mar 2020 22:23:10 +0900</lastBuildDate>
     
-	<atom:link href="limztudio.github.io/tags/rendering/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/rendering/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>my first lightmap baker: Bakery</title>
-      <link>limztudio.github.io/post/bakery_mark_1/</link>
+      <link>/post/bakery_mark_1/</link>
       <pubDate>Fri, 13 Mar 2020 22:23:10 +0900</pubDate>
       
-      <guid>limztudio.github.io/post/bakery_mark_1/</guid>
+      <guid>/post/bakery_mark_1/</guid>
       <description>it&amp;rsquo;s been a couple of years. since I started making my own lightmap baker.
 and before I start this article, I finished this project. although I need a lot of things to do on it. such as optimization, complete some minor features and fix many bugs&amp;hellip;
 but now I&amp;rsquo;m planning to make a Mark.II of it. because I judged here are too many things to be changed. also, I won&amp;rsquo;t use radiosity anymore.</description>
