@@ -12,14 +12,14 @@
     
     
     <item>
-      <title>my first lightmap baker: Bakery</title>
+      <title>My first lightmap baker: Bakery</title>
       <link>https://limztudio.github.io/post/bakery_mark_1/</link>
       <pubDate>Fri, 13 Mar 2020 22:23:10 +0900</pubDate>
       
       <guid>https://limztudio.github.io/post/bakery_mark_1/</guid>
-      <description>it&amp;rsquo;s been a couple of years. since I started making my own lightmap baker.
-and before I start this article, I finished this project. although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&amp;hellip;
-but now I&amp;rsquo;m planning to make a Mark.II of it. because I judged here are too many things to be changed. also, I won&amp;rsquo;t use radiosity anymore.</description>
+      <description>It&amp;rsquo;s been a couple of years. Since I started making my own lightmap baker.
+And before I start this article, I finished this project. Although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&amp;hellip;
+But now I&amp;rsquo;m planning to make a Mark.II of it. Because I judged here are too many things to be changed. Also, I won&amp;rsquo;t use radiosity anymore.</description>
     </item>
     
   </channel>

@@ -4,23 +4,23 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>my first lightmap baker: Bakery - LimZtudio</title>
+	<title>My first lightmap baker: Bakery - LimZtudio</title>
 	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
 	<meta name="description" content="">
-	<meta property="og:title" content="my first lightmap baker: Bakery" />
-<meta property="og:description" content="it&rsquo;s been a couple of years. since I started making my own lightmap baker.
-and before I start this article, I finished this project. although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&hellip;
-but now I&rsquo;m planning to make a Mark.II of it. because I judged here are too many things to be changed. also, I won&rsquo;t use radiosity anymore." />
+	<meta property="og:title" content="My first lightmap baker: Bakery" />
+<meta property="og:description" content="It&rsquo;s been a couple of years. Since I started making my own lightmap baker.
+And before I start this article, I finished this project. Although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&hellip;
+But now I&rsquo;m planning to make a Mark.II of it. Because I judged here are too many things to be changed. Also, I won&rsquo;t use radiosity anymore." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://limztudio.github.io/post/bakery_mark_1/" />
 <meta property="article:published_time" content="2020-03-13T22:23:10+09:00" />
 <meta property="article:modified_time" content="2020-03-13T22:23:10+09:00" />
 
 	<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="my first lightmap baker: Bakery"/>
-<meta name="twitter:description" content="it&rsquo;s been a couple of years. since I started making my own lightmap baker.
-and before I start this article, I finished this project. although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&hellip;
-but now I&rsquo;m planning to make a Mark.II of it. because I judged here are too many things to be changed. also, I won&rsquo;t use radiosity anymore."/>
+<meta name="twitter:title" content="My first lightmap baker: Bakery"/>
+<meta name="twitter:description" content="It&rsquo;s been a couple of years. Since I started making my own lightmap baker.
+And before I start this article, I finished this project. Although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&hellip;
+But now I&rsquo;m planning to make a Mark.II of it. Because I judged here are too many things to be changed. Also, I won&rsquo;t use radiosity anymore."/>
 
 	<link rel="dns-prefetch" href="//fonts.googleapis.com">
 	<link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -64,8 +64,8 @@ but now I&rsquo;m planning to make a Mark.II of it. because I judged here are to
 <main class="main" role="main">
 	<article class="post">
 		<header class="post__header">
-			<h1 class="post__title">my first lightmap baker: Bakery</h1>
-			<p class="post__lead">a note about my struggle while I was making my first lightmap baker.</p>
+			<h1 class="post__title">My first lightmap baker: Bakery</h1>
+			<p class="post__lead">A note about my struggle while I was making my first lightmap baker.</p>
 			<div class="post__meta meta">
 <div class="meta__item-datetime meta__item">
 	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
@@ -78,16 +78,16 @@ but now I&rsquo;m planning to make a Mark.II of it. because I judged here are to
 	</span>
 </div></div>
 		</header><div class="content post__content clearfix">
-			<p>it&rsquo;s been a couple of years. since I started making my own lightmap baker.<br>
-and before I start this article, I finished this project. although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&hellip;<br>
-but now I&rsquo;m planning to make a Mark.II of it. because I judged here are too many things to be changed. also, I won&rsquo;t use radiosity anymore. instead, I will use raytrace for my next project.</p>
-<p>anyway, here&rsquo;s how I created it.</p>
+			<p>It&rsquo;s been a couple of years. Since I started making my own lightmap baker.<br>
+And before I start this article, I finished this project. Although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&hellip;<br>
+But now I&rsquo;m planning to make a Mark.II of it. Because I judged here are too many things to be changed. Also, I won&rsquo;t use radiosity anymore. instead, I will use raytrace for my next project.</p>
+<p>Anyway, here&rsquo;s how I created it.</p>
 <h2 id="at-the-beginning">At the beginning</h2>
-<p>let&rsquo;s go back to when I started this project.<br>
+<p>Let&rsquo;s go back to when I started this project.<br>
 I got a request that our game needs indirect lighting technique to make it looks fancier.<br>
-and at that time, I don&rsquo;t have any knowledge of indirect light. so I had no idea where do I start it.<br>
-but thankfully, one of my bosses told me a keyword. <em><strong>Radiosity</strong></em>.</p>
-<p>so the first I read was <a href="https://en.wikipedia.org/wiki/Radiosity_(computer_graphics)">Radiosity on Wikipedia</a>.</p>
+And at that time, I don&rsquo;t have any knowledge of indirect light. So I had no idea where do I start it.<br>
+But thankfully, one of my bosses told me a keyword. <em><strong>Radiosity</strong></em>.</p>
+<p>So the first I read was <a href="https://en.wikipedia.org/wiki/Radiosity_(computer_graphics)">Radiosity on Wikipedia</a>.</p>
 
 		</div>
 		<footer class="post__footer">
