@@ -88,13 +88,17 @@ I got a request that our game needs indirect lighting technique to make it looks
 And at that time, I don&rsquo;t have any knowledge of indirect light. So I had no idea where do I start it.<br>
 But thankfully, one of my bosses told me a keyword. <em><strong>Radiosity</strong></em>.</p>
 <p>So the first I read was <a href="https://en.wikipedia.org/wiki/Radiosity_(computer_graphics)">Radiosity on Wikipedia</a>. Then I could learn how it working. But still, needed something more detail or an actual example of implementation.<br>
-And I found <a href="https://mynameismjp.wordpress.com/2011/01/31/radiosity-dx11-style/">Radiosity, DX11 style</a>. It described how to calculate Irradiances in every vertex, and bake them using <a href="https://en.wikipedia.org/wiki/Spherical_harmonics">Spherical harmonics</a> to store in each vertex.</p>
-<h2 id="radiosity_wiki">References</h2>
+And I found <a href="https://mynameismjp.wordpress.com/2011/01/31/radiosity-dx11-style/">Radiosity, DX11 style</a>. It described how to calculate irradiance in every vertex, and bake them using <a href="https://en.wikipedia.org/wiki/Spherical_harmonics">Spherical harmonics</a> to store in each vertex.<br>
+But in my case, irradiance needed to be calculated in every texel of each object. so I decided I better make it possible to store in texels first.</p>
+<h2 id="find-sample-points">Find sample points</h2>
+<p>Unlike using &lsquo;vertex as sample point&rsquo;(what I call sample point is a point that calculates irradiance by its normal direction and stores them), &lsquo;texel as sample point&rsquo; need to be found where is their position and normal direction along their UV coordinate.</p>
+<h2 id="references">References</h2>
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/Radiosity_(computer_graphics)">Radiosity on Wikipedia</a></li>
 <li><a href="https://mynameismjp.wordpress.com/2011/01/31/radiosity-dx11-style/">Radiosity, DX11 style, by MJP</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Spherical_harmonics">Spherical harmonics</a></li>
 <li><a href="https://web.archive.org/web/20160511192712/http://freespace.virgin.net/hugo.elias/radiosity/radiosity.htm">Radiosity, by Hugo Elias</a></li>
+<li><a href="http://public.beuth-hochschule.de/~godberse/wiese/cga1/08_3Dglobal/sw/radiosity/radiosity_all.htm">Radiosity OverView</a></li>
 </ul>
 
 		</div>
