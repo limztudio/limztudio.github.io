@@ -92,6 +92,16 @@ And I found <a href="https://mynameismjp.wordpress.com/2011/01/31/radiosity-dx11
 But in my case, irradiance needed to be calculated in every texel of each object. so I decided I better make it possible to store in texels first.</p>
 <h2 id="find-sample-points">Find sample points</h2>
 <p>Unlike using &lsquo;vertex as sample point&rsquo;(what I call sample point is a point that calculates irradiance by its normal direction and stores them), &lsquo;texel as sample point&rsquo; need to be found where is their position and normal direction along their UV coordinate.</p>
+<p>So my idea to find out each sample point was:</p>
+<blockquote>
+<ol>
+<li>Give a specific size of a segment. The number of sample points on an object surface will depend on this segment size.</li>
+<li>Multiply each UV position by the segment size. The result of each UV position(let&rsquo;s call this &lsquo;vertex on pixel&rsquo;) will be a position on its lightmap in pixel.</li>
+<li>Connect every &lsquo;vertex on pixel&rsquo; by their index(vertex order). Then you will get shapes on their lightmap(and let&rsquo;s call this &lsquo;shape on pixel&rsquo;).</li>
+<li>Put each &lsquo;shape on pixel&rsquo; on a grid whose distance from a line to line is 1 pixel.</li>
+<li>Now you can see an intersection between every &lsquo;shape on pixel&rsquo; and 1x1 squares made by the grid.</li>
+</ol>
+</blockquote>
 <h2 id="references">References</h2>
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/Radiosity_(computer_graphics)">Radiosity on Wikipedia</a></li>
