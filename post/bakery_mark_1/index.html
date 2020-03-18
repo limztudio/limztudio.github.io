@@ -100,6 +100,8 @@ But in my case, irradiance needed to be calculated in every texel of each object
 <li>Connect every &lsquo;vertex on pixel&rsquo; by their index(vertex order). Then you will get shapes on their lightmap(and let&rsquo;s call this &lsquo;shape on pixel&rsquo;).</li>
 <li>Put each &lsquo;shape on pixel&rsquo; on a grid whose distance from a line to line is 1 pixel.</li>
 <li>Now you can see an intersection between every &lsquo;shape on pixel&rsquo; and 1x1 squares made by the grid.</li>
+<li>Find every centroid in every shape made by the intersection.</li>
+<li>Convert every centroid to 3D space. You can earn the position and normal direction of each sample point.</li>
 </ol>
 </blockquote>
 <h2 id="references">References</h2>
