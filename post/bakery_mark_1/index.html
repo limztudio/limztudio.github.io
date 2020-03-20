@@ -104,10 +104,22 @@ But in my case, irradiance needed to be calculated in every texel of each object
 <li>Convert every centroid to 3D space. You can earn the position and normal direction of each sample point.</li>
 </ol>
 </blockquote>
-<blockquote>
-<p><img src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure01.gif" alt="img_figure01" title="Figure 01"><br>
-Figure 01: A flow of find sample points in 2D(UV) space. Green points are the each of &lsquo;vertex on pixel&rsquo;. Red squares are intersections. And black points are the centroids to be calculated by sample point on 3D space.</p>
-</blockquote>
+<p>And <em>Figure 01</em> is how are the steps I described working on:<br>
+
+
+
+<div class="center">
+  <img
+    src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure01.gif"
+    alt="Figure01"
+    decoding="async"
+  />
+</div>
+
+
+<div style="text-align: center; font-style: italic;">
+Figure 01: A flow of find sample points in 2D(UV) space. Green points are the each of &#39;vertex on pixel&#39;. Red squares are intersections. And black points are the centroids to be calculated by sample point on 3D space.
+</div></p>
 <h2 id="references">References</h2>
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/Radiosity_(computer_graphics)">Radiosity on Wikipedia</a></li>
