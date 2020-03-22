@@ -82,6 +82,7 @@ But now I&rsquo;m planning to make a Mark.II of it. Because I judged here are to
 And before I start this article, I finished this project. Although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&hellip;<br>
 But now I&rsquo;m planning to make a Mark.II of it. Because I judged here are too many things to be changed. Also, I won&rsquo;t use radiosity anymore. instead, I will use raytrace for my next project.</p>
 <p>Anyway, here&rsquo;s how I created it.</p>
+<br/><br/>
 <h2 id="at-the-beginning">At the beginning</h2>
 <p>Let&rsquo;s go back to when I started this project.<br>
 I got a request that our game needs indirect lighting technique to make it looks fancier.<br>
@@ -90,6 +91,7 @@ But thankfully, one of my bosses told me a keyword. <em><strong>Radiosity</stron
 <p>So the first I read was <a href="https://en.wikipedia.org/wiki/Radiosity_(computer_graphics)">Radiosity on Wikipedia</a>. Then I could learn how it working. But still, needed something more detail or an actual example of implementation.<br>
 And I found <a href="https://mynameismjp.wordpress.com/2011/01/31/radiosity-dx11-style/">Radiosity, DX11 style</a>. It described how to calculate irradiance in every vertex, and bake them using <a href="https://en.wikipedia.org/wiki/Spherical_harmonics">Spherical harmonics</a> to store in each vertex.<br>
 But in my case, irradiance needed to be calculated in every texel of each object. So I decided I better make it possible to store in texels first.</p>
+<br/><br/>
 <h2 id="find-sample-points">Find sample points</h2>
 <p>Unlike using &lsquo;vertex as sample point&rsquo;(what I call sample point is a point that calculates irradiance by its position and normal direction, then stores them), &lsquo;texel as sample point&rsquo; need to be found where is their position and normal direction along their UV coordinate.</p>
 <p>So my idea to find out each sample point was:</p>
@@ -97,10 +99,10 @@ But in my case, irradiance needed to be calculated in every texel of each object
 <ol>
 <li>Give a specific size of a segment. The number of sample points on an object surface will depend on this segment size.</li>
 <li>Multiply each UV position by the segment size. The result of each UV position(let&rsquo;s call this &lsquo;vertex on pixel&rsquo;) will be a position on its lightmap in pixel.</li>
-<li>Connect every &lsquo;vertex on pixel&rsquo; by their index(vertex order). Then you will get shapes on their lightmap(and let&rsquo;s call this &lsquo;shape on pixel&rsquo;).</li>
-<li>Put each &lsquo;shape on pixel&rsquo; on a grid whose distance from a line to line is 1 pixel.</li>
-<li>Now you can see an intersection between every &lsquo;shape on pixel&rsquo; and 1x1 squares made by the grid.</li>
-<li>Find every centroid in every shape made by the intersection.</li>
+<li>Connect every &lsquo;vertex on pixel&rsquo; by their index(vertex order). Then you will get polygons on their lightmap(and let&rsquo;s call this &lsquo;polygon on pixel&rsquo;).</li>
+<li>Put each &lsquo;polygon on pixel&rsquo; on a grid whose distance from a line to line is 1 pixel.</li>
+<li>Now you can see an intersection between every &lsquo;polygon on pixel&rsquo; and 1x1 squares made by the grid.</li>
+<li>Find every centroid in every polygon made by the intersection.</li>
 <li>Convert every centroid to 3D space. You can earn the position and normal direction of each sample point.</li>
 </ol>
 </blockquote>
@@ -120,12 +122,160 @@ But in my case, irradiance needed to be calculated in every texel of each object
 <div style="text-align: center; font-style: italic;">
 Figure 01: A flow of find sample points in 2D(UV) space. Green points are the each of &#39;vertex on pixel&#39;. Red squares are intersections. And black points are the centroids to be calculated by sample point on 3D space.
 </div></p>
+<p><br/><br/>
+Then next I thought was how do I come up with an algorithm to find out these centroids on the UV space.<br>
+And after few times of attempt, I got an idea:</p>
+<blockquote>
+<p>It&rsquo;s quite simple. Guess the segment size is 16.<br>
+Then let&rsquo;s start off making a 16x16 square on the UV space.</p>
+<ol>
+<li>Check if the box(square) and triangle(polygon) are intersected. And the result of the intersection can be expressed by these four:
+<ul>
+<li>Triangle contains box</li>
+<li>Box contains triangle</li>
+<li>They&rsquo;re intersected</li>
+<li>Nothing intersected</li>
+</ul>
+</li>
+<li>If the triangle contains the box, every 1x1 square in the box is contained by the triangle.<br>
+Therefore, chop the box in every 1x1 square. Then calculate the centroid of each square.</li>
+<li>If the box contains the triangle or they&rsquo;re just intersected, chop the box in half and back to step 1.<br>
+And if the box has a larger height than width, chop it in a horizontal direction. Or else, chop it in a vertical direction.</li>
+<li>If nothing intersected between them, you can finish this loop.</li>
+<li>If the box size became 1x1, you can also finish this loop. After doing this following subsequential steps:
+<ul>
+<li>If the triangle contains the box, calculate the centroid of the box.</li>
+<li>If the box contains the triangle, calculate the centroid of the triangle.</li>
+<li>If they&rsquo;re just intersected, find a subject polygon generated by the intersection between them. and calculate its centroid.</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<p>Also, to find out the subject polygon between two polygons, I remembered <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm</a>.</p>
+<p>And this is a C++ like pseudo code of my idea. Additionally, I used <a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;tbb/task_group.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+...
+
+Triangles triangles;
+Centroids centroids;
+
+tbb<span style="color:#f92672">::</span>task_group worker;
+
+...
+
+Polygon calculateSubjectPolygon(<span style="color:#66d9ef">const</span> Polygon<span style="color:#f92672">&amp;</span> clipper, <span style="color:#66d9ef">const</span> Polygon<span style="color:#f92672">&amp;</span> clipTarget){
+    <span style="color:#75715e">// use Sutherland–Hodgman algorithm to calculate subject polygon.
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// mind you that the &#39;clipTarget&#39; will be clipped by each side of the &#39;clipper&#39;.
+</span><span style="color:#75715e"></span>    ...
+}
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">collectCentroidsInTriangle</span>(
+                                <span style="color:#66d9ef">const</span> Triangle<span style="color:#f92672">&amp;</span> triangle,
+                                <span style="color:#66d9ef">unsigned</span> left,
+                                <span style="color:#66d9ef">unsigned</span> top,
+                                <span style="color:#66d9ef">unsigned</span> right,
+                                <span style="color:#66d9ef">unsigned</span> bottom
+                                )
+{
+    Box box(left, top, right, bottom);
+    
+    <span style="color:#75715e">// the &#39;state&#39; can be expressed by:
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// &#34;triangle contains box&#34;
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// &#34;box contains triangle&#34;
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// &#34;they&#39;re intersected&#34;
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// &#34;nothing intersected&#34;
+</span><span style="color:#75715e"></span>    IntersectState state <span style="color:#f92672">=</span> box.intersect(triangle);
+    
+    <span style="color:#75715e">// if the &#39;box&#39; has 1x1 of size, you can&#39;t chop it anymore.
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span>(box.width <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">&amp;&amp;</span> box.height <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>){
+        <span style="color:#66d9ef">if</span>(state <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;triangle contains box&#34;</span>){
+            centroids.add(box.calCentroid());
+        }
+        <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span>(state <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;box contains triangle&#34;</span>){
+            centroids.add(triangle.calCentroid());
+        }
+        <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span>(state <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;they&#39;re intersected&#34;</span>){
+            <span style="color:#75715e">// find a subject polygon generated by the intersection between &#39;box&#39; and &#39;triangle&#39;.
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// then calculate its centroid.
+</span><span style="color:#75715e"></span>            centroids.add(calculateSubjectPolygon(box, triangle).calCentroid());
+        }
+    }
+    <span style="color:#66d9ef">else</span>{
+        <span style="color:#66d9ef">if</span>(state <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;triangle contains box&#34;</span>){
+            <span style="color:#75715e">// chop &#39;box&#39; in every 1x1 square.
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// then calculate the centroid of each square.
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">unsigned</span> y <span style="color:#f92672">=</span> top; y <span style="color:#f92672">&lt;</span> bottom; <span style="color:#f92672">++</span>y){
+                <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">unsigned</span> x <span style="color:#f92672">=</span> left; x <span style="color:#f92672">&lt;</span> right; <span style="color:#f92672">++</span>x){
+                    Box boxLocal(x, y, x <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, y <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+                    
+                    centroids.add(boxLocal.calCentroid());
+                }
+            }
+        }
+        <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span>(state <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;box contains triangle&#34;</span> <span style="color:#f92672">||</span> state <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;they&#39;re intersected&#34;</span>){
+            <span style="color:#75715e">// chop current &#39;box&#39; in half and execute this function again.
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// if the &#39;box&#39; has a larger height than width, chop it in a horizontal direction.
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// or else, chop it in a vertical direction.
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span>(box.height <span style="color:#f92672">&gt;</span> box.width){
+                worker.run([<span style="color:#f92672">&amp;</span>]{
+                    collectCentroidsInTriangle(triangle, left, top, right, (top <span style="color:#f92672">+</span> bottom) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>);
+                    });
+                worker.run([<span style="color:#f92672">&amp;</span>]{
+                    collectCentroidsInTriangle(triangle, left, (top <span style="color:#f92672">+</span> bottom) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>, right, bottom);
+                    });
+            }
+            <span style="color:#66d9ef">else</span>{
+                worker.run([<span style="color:#f92672">&amp;</span>]{
+                    collectCentroidsInTriangle(triangle, left, top, (left <span style="color:#f92672">+</span> right) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>, bottom);
+                    });
+                worker.run([<span style="color:#f92672">&amp;</span>]{
+                    collectCentroidsInTriangle(triangle, (left <span style="color:#f92672">+</span> right) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>, top, right, bottom);
+                    });
+            }
+        }
+    }
+}
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">collectCentroidsInTriangles</span>(<span style="color:#66d9ef">unsigned</span> segmentSize){
+    <span style="color:#75715e">// scale UV coordinate by segmentSize
+</span><span style="color:#75715e"></span>    triangles.setSegment(segmentSize);
+    
+    <span style="color:#75715e">// since multiple triangles can exist in an object,
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// you need to iterate all triangles in the object.
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span>(cosnt Triangle<span style="color:#f92672">&amp;</span> triangle : triangles){
+        unsinged minX, minY, maxX, maxY;
+        
+        <span style="color:#75715e">// find min/max UV coordinate of each &#39;triangle&#39;
+</span><span style="color:#75715e"></span>        triangle.findMinMax(<span style="color:#f92672">&amp;</span>minX, <span style="color:#f92672">&amp;</span>minY, <span style="color:#f92672">&amp;</span>maxX, <span style="color:#f92672">&amp;</span>maxY);
+        
+        worker.run([<span style="color:#f92672">&amp;</span>]{
+            collectCentroidsInTriangle(triangle, minX, minY, maxX <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, maxY <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+            });
+    }
+}
+
+...
+
+<span style="color:#66d9ef">int</span> main(){
+    ...
+    triangles.init();
+    centroids.init();
+    
+    collectCentroidsInTriangles(<span style="color:#ae81ff">16</span>);
+    
+    <span style="color:#75715e">// wait for every task to complete
+</span><span style="color:#75715e"></span>    worker.wait();
+    ...
+}
+</code></pre></div><br/><br/>
 <h2 id="references">References</h2>
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/Radiosity_(computer_graphics)">Radiosity on Wikipedia</a></li>
 <li><a href="https://mynameismjp.wordpress.com/2011/01/31/radiosity-dx11-style/">Radiosity, DX11 style, by MJP</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Spherical_harmonics">Spherical harmonics on Wikipedia</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm on Wikipedia</a></li>
+<li><a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a></li>
 <li><a href="https://web.archive.org/web/20160511192712/http://freespace.virgin.net/hugo.elias/radiosity/radiosity.htm">Radiosity, by Hugo Elias</a></li>
 <li><a href="http://public.beuth-hochschule.de/~godberse/wiese/cga1/08_3Dglobal/sw/radiosity/radiosity_all.htm">Radiosity OverView</a></li>
 </ul>
