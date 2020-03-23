@@ -120,16 +120,16 @@ But in my case, irradiance needed to be calculated in every texel of each object
 
 
 <div style="text-align: center; font-style: italic;">
-Figure 01: A flow of find sample points in 2D(UV) space. Green points are the each of &#39;vertex on pixel&#39;. Red squares are intersections. And black points are the centroids to be calculated by sample point on 3D space.
+Figure 01: A flow of find sample points in 2D(UV) space. The green points are the each of &#39;vertex on pixel&#39;. The red squares are intersections. And the black points are the centroids to be calculated by sample point on 3D space.
 </div></p>
 <p><br/><br/>
 Then next I thought was how do I come up with an algorithm to find out these centroids on the UV space.<br>
 And after few times of attempt, I got an idea:</p>
 <blockquote>
-<p>It&rsquo;s quite simple. Guess the segment size is 16.<br>
-Then let&rsquo;s start off making a 16x16 square on the UV space.</p>
+<p>It&rsquo;s quite simple. Guess the segment size is 32.<br>
+Then let&rsquo;s start off making a 32x32 square on the UV space.</p>
 <ol>
-<li>Check if the box(square) and triangle(polygon) are intersected. And the result of the intersection can be expressed by these four:
+<li>Check if the box(square) and triangle(polygon on pixel) are intersected. And the result of the intersection can be expressed by these four:
 <ul>
 <li>Triangle contains box</li>
 <li>Box contains triangle</li>
@@ -139,7 +139,7 @@ Then let&rsquo;s start off making a 16x16 square on the UV space.</p>
 </li>
 <li>If the triangle contains the box, every 1x1 square in the box is contained by the triangle.<br>
 Therefore, chop the box in every 1x1 square. Then calculate the centroid of each square.</li>
-<li>If the box contains the triangle or they&rsquo;re just intersected, chop the box in half and back to step 1.<br>
+<li>If the box contains the triangle or they&rsquo;re just intersected, chop the box in half and back to step 1. Then perform this procedure again for chopped two boxes.<br>
 And if the box has a larger height than width, chop it in a horizontal direction. Or else, chop it in a vertical direction.</li>
 <li>If nothing intersected between them, you can finish this loop.</li>
 <li>If the box size became 1x1, you can also finish this loop. After doing this following subsequential steps:
@@ -151,8 +151,26 @@ And if the box has a larger height than width, chop it in a horizontal direction
 </li>
 </ol>
 </blockquote>
-<p>Also, to find out the subject polygon between two polygons, I remembered <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm</a>.</p>
-<p>And this is a C++ like pseudo code of my idea. Additionally, I used <a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a>.</p>
+<p>And here&rsquo;s <em>Figure 02</em>. As I mentioned, when the boxes chopped in half, the chopped two boxes need to perform the above procedure individually. But I described only one of the box here for the explanation. 
+
+
+
+<div class="center">
+  <img
+    src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure02.gif"
+    alt="Figure02"
+    decoding="async"
+  />
+</div>
+
+
+<div style="text-align: center; font-style: italic;">
+Figure 02: A flow of find centroids. The black square is discarded region. And black points are the centroids.
+</div></p>
+<p><br/><br/>
+Also, I remembered <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm</a>. To find out the subject polygon between interested two polygons.</p>
+<p>And here is a C++ like pseudo code of my idea. I used <a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a>. Which allowed me easily parallelize my code. Because it has its own task scheduler.<br>
+If you&rsquo;re working with <strong>MVSC</strong>, you can use <strong>PPL</strong>(since <strong>MVSC 2010</strong>) instead of <strong>TBB</strong> library. Seems mostly it&rsquo;s possible to switch between them. Though it looks like <strong>TBB</strong> has more extra features than <strong>PPL</strong>.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;tbb/task_group.h&#34;</span><span style="color:#75715e">
 </span><span style="color:#75715e"></span>
 ...
@@ -262,7 +280,7 @@ Polygon calculateSubjectPolygon(<span style="color:#66d9ef">const</span> Polygon
     triangles.init();
     centroids.init();
     
-    collectCentroidsInTriangles(<span style="color:#ae81ff">16</span>);
+    collectCentroidsInTriangles(<span style="color:#ae81ff">32</span>);
     
     <span style="color:#75715e">// wait for every task to complete
 </span><span style="color:#75715e"></span>    worker.wait();
