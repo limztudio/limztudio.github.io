@@ -292,14 +292,14 @@ Polygon calculateSubjectPolygon(<span style="color:#66d9ef">const</span> Polygon
 <h2 id="centroids-become-sample-points-in-3d-space">Centroids become sample points in 3D space</h2>
 <p>We&rsquo;ve been watching how to find centroids in 2D space. And now it&rsquo;s time to convert these in 3D space to use them as an actual sample point.</p>
 <p>And fortunately, there was a good tool to convert my centroids. it&rsquo;s called <a href="https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates">Barycentric coordinates</a>.<br>
-According to the article(in the link above), it&rsquo;s possible to convert each centroids with following steps:</p>
+According to the article(in the link above), it&rsquo;s possible to convert each centroid with down below:</p>
 <blockquote>
 <ol>
 <li>Here you have a triangle \(\triangle ABC\).</li>
 <li>And there&rsquo;s a point \(P\) which located in inside the \(\triangle ABC\).</li>
 <li>Then if you connect all the points \(A\), \(B\), \(C\) and \(P\), you will get 3 sub-triangles \(\triangle ABP\), \(\triangle ACP\) and \(\triangle BCP\).</li>
 <li>And let&rsquo;s say, \(x = \frac{\triangle BCP _\rm{Area}}{\triangle ABC _\rm{Area}}\), \(y = \frac{\triangle ACP _\rm{Area}}{\triangle ABC _\rm{Area}}\) and \(z = \frac{\triangle ABP _\rm{Area}}{\triangle ABC _\rm{Area}}\). Then you can see \(x + y + z = 1\).</li>
-<li>Finally, you can calculate \(P\) by following: \(P = xA + yB + zC\).</li>
+<li>Finally, you can calculate \(P\) by the following: \(P = xA + yB + zC\).</li>
 </ol>
 </blockquote>
 <br/><br/>
