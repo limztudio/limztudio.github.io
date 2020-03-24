@@ -80,7 +80,7 @@ But now I&rsquo;m planning to make a Mark.II of it. Because I judged here are to
 		</header><div class="content post__content clearfix">
 			<p>It&rsquo;s been a couple of years. Since I started making my own lightmap baker.<br>
 And before I start this article, I finished this project. Although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&hellip;<br>
-But now I&rsquo;m planning to make a Mark.II of it. Because I judged here are too many things to be changed. Also, I won&rsquo;t use radiosity anymore. instead, I will use raytrace for my next project.</p>
+But now I&rsquo;m planning to make a Mark.II of it. Because I judged here are too many things to be changed. Also, I won&rsquo;t use radiosity anymore. Instead, I will use raytrace for my next project.</p>
 <p>Anyway, here&rsquo;s how I created it.</p>
 <br/><br/>
 <h2 id="at-the-beginning">At the beginning</h2>
@@ -121,9 +121,9 @@ But in my case, irradiance needed to be calculated in every texel of each object
 
 <div style="text-align: center; font-style: italic;">
 Figure 01: A flow of find sample points in 2D(UV) space. The green points are the each of &#39;vertex on pixel&#39;. The red squares are intersections. And the black points are the centroids to be calculated by sample point on 3D space.
-</div></p>
-<p><br/><br/>
-Then next I thought was how do I come up with an algorithm to find out these centroids on the UV space.<br>
+</div>
+<br/><br/></p>
+<p>Then next I thought was how do I come up with an algorithm to find out these centroids on the UV space.<br>
 And after few times of attempt, I got an idea:</p>
 <blockquote>
 <p>It&rsquo;s quite simple. Guess the segment size is 32.<br>
@@ -151,7 +151,7 @@ And if the box has a larger height than width, chop it in a horizontal direction
 </li>
 </ol>
 </blockquote>
-<p>And here&rsquo;s <em>Figure 02</em>. As I mentioned, when the boxes chopped in half, the chopped two boxes need to perform the above procedure individually. But I described only one of the box here for the explanation. 
+<p>And here&rsquo;s <em>Figure 02</em>. As I mentioned, when the boxes chopped in half, the chopped two boxes need to perform the above procedure individually. But I depicted only one of the box here for an explanation. 
 
 
 
@@ -166,9 +166,9 @@ And if the box has a larger height than width, chop it in a horizontal direction
 
 <div style="text-align: center; font-style: italic;">
 Figure 02: A flow of find centroids. The black squares are discarded region. And black points are the centroids.
-</div></p>
-<p><br/><br/>
-Also, I remembered <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm</a>. To find out the subject polygon between interested two polygons.</p>
+</div>
+<br/><br/></p>
+<p>Also, I remembered <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm</a>. To find out the subject polygon between interested two polygons.</p>
 <p>And here is a C++ like pseudo code of my idea. I used <a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a>. Which allowed me easily parallelize my code. Because it has its own task scheduler.<br>
 If you&rsquo;re working with <strong>MVSC</strong>, you can use <strong>PPL</strong>(since <strong>MVSC 2010</strong>) instead of <strong>TBB</strong> library. Seems mostly it&rsquo;s possible to switch between them. Though it looks like <strong>TBB</strong> has more extra features than <strong>PPL</strong>.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;tbb/task_group.h&#34;</span><span style="color:#75715e">
@@ -287,6 +287,22 @@ Polygon calculateSubjectPolygon(<span style="color:#66d9ef">const</span> Polygon
     ...
 }
 </code></pre></div><br/><br/>
+<p>Now we have a couple of steps left to be ready to calculate irradiance.</p>
+<br/><br/>
+<h2 id="centroids-become-sample-points-in-3d-space">Centroids become sample points in 3D space</h2>
+<p>We&rsquo;ve been watching how to find centroids in 2D space. And now it&rsquo;s time to convert these in 3D space to use them as an actual sample point.</p>
+<p>And fortunately, there was a good tool to convert my centroids. it&rsquo;s called <a href="https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates">Barycentric coordinates</a>.<br>
+According to the article(in the link above), it&rsquo;s possible to convert each centroids with following steps:</p>
+<blockquote>
+<ol>
+<li>Here you have a triangle \(\triangle ABC\).</li>
+<li>And there&rsquo;s a point \(P\) which located in inside the \(\triangle ABC\).</li>
+<li>Then if you connect all the points \(A\), \(B\), \(C\) and \(P\), you will get 3 sub-triangles \(\triangle ABP\), \(\triangle ACP\) and \(\triangle BCP\).</li>
+<li>And let&rsquo;s say, \(x = \frac{\triangle BCP _\rm{Area}}{\triangle ABC _\rm{Area}}\), \(y = \frac{\triangle ACP _\rm{Area}}{\triangle ABC _\rm{Area}}\) and \(z = \frac{\triangle ABP _\rm{Area}}{\triangle ABC _\rm{Area}}\). Then you can see \(x + y + z = 1\).</li>
+<li>Finally, you can calculate \(P\) by following: \(P = xA + yB + zC\).</li>
+</ol>
+</blockquote>
+<br/><br/>
 <h2 id="references">References</h2>
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/Radiosity_(computer_graphics)">Radiosity on Wikipedia</a></li>
@@ -294,6 +310,7 @@ Polygon calculateSubjectPolygon(<span style="color:#66d9ef">const</span> Polygon
 <li><a href="https://en.wikipedia.org/wiki/Spherical_harmonics">Spherical harmonics on Wikipedia</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm on Wikipedia</a></li>
 <li><a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a></li>
+<li><a href="https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates">Barycentric coordinates by Scratchapixel</a></li>
 <li><a href="https://web.archive.org/web/20160511192712/http://freespace.virgin.net/hugo.elias/radiosity/radiosity.htm">Radiosity, by Hugo Elias</a></li>
 <li><a href="http://public.beuth-hochschule.de/~godberse/wiese/cga1/08_3Dglobal/sw/radiosity/radiosity_all.htm">Radiosity OverView</a></li>
 </ul>
@@ -369,6 +386,7 @@ Polygon calculateSubjectPolygon(<span style="color:#66d9ef">const</span> Polygon
 	</div>
 <script async defer src="/js/menu.js"></script>
 <script src="/js/custom.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </body>
 </html>
