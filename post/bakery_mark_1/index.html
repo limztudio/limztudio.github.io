@@ -169,7 +169,7 @@ Figure 02: A flow of find centroids. The black squares are discarded region. And
 </div>
 <br/><br/></p>
 <p>Also, I remembered <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm</a>. To find out the &lsquo;generated polygon&rsquo; between interested two polygons.<br>
-On the article, they referred that if the subject polygon is concave, the output &lsquo;generated polygon&rsquo; may have extraneous lines. Since it has only one vertex list. So somehow this may cause a problem to find out centroid depending on an algorithm.<br>
+On the article, they referred that if the subject polygon is concave, the output &lsquo;generated polygon&rsquo; may have extraneous lines. Since it has only one vertex list output. So somehow this may cause a problem to find out centroid depending on an algorithm.<br>
 But luckily, the subject polygon here always be a triangle, so it will never be concaved.</p>
 <p>And here is a C++ like pseudo code of my idea. I used <a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a>. Which allowed me easily parallelize my code. Because it has its own task scheduler.<br>
 If you&rsquo;re working with <strong>MVSC</strong>, you can use <strong>PPL</strong>(since <strong>MVSC 2010</strong>) instead of <strong>TBB</strong> library. Seems mostly it&rsquo;s possible to switch between them. Though it looks like <strong>TBB</strong> has more extra features than <strong>PPL</strong>.</p>
