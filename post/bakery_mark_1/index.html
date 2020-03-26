@@ -171,7 +171,7 @@ Figure 02: A flow of find centroids. The black squares are discarded region. And
 <p>Also, I remembered <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm</a>. To find out the &lsquo;generated polygon&rsquo; between interested two polygons.<br>
 On the article, they referred that if the subject polygon is concave, the output &lsquo;generated polygon&rsquo; may have extraneous lines. Since it has only one vertex list output. So somehow this may cause a problem to find out centroid depending on an algorithm.<br>
 But luckily, the subject polygon here always be a triangle, so it will never be concaved.</p>
-<p>And here is a C++ like pseudo code of my idea. I used <a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a>. Which allowed me easily parallelize my code. Because it has its own task scheduler.<br>
+<p>And here is a C++ like pseudo-code of my idea. I used <a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a>. Which allowed me easily parallelize my code. Because it has its own task scheduler.<br>
 If you&rsquo;re working with <strong>MVSC</strong>, you can use <strong>PPL</strong>(since <strong>MVSC 2010</strong>) instead of <strong>TBB</strong> library. Seems mostly it&rsquo;s possible to switch between them. Though it looks like <strong>TBB</strong> has more extra features than <strong>PPL</strong>.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;tbb/task_group.h&#34;</span><span style="color:#75715e">
 </span><span style="color:#75715e"></span>
@@ -261,7 +261,7 @@ Polygon calculateIntersectGeneratedPolygon(<span style="color:#66d9ef">const</sp
     <span style="color:#75715e">// scale UV coordinate by segmentSize
 </span><span style="color:#75715e"></span>    triangles.setSegment(segmentSize);
     
-    <span style="color:#75715e">// since multiple triangles can exist in an object,
+    <span style="color:#75715e">// since multiple triangles can exist in the same object,
 </span><span style="color:#75715e"></span>    <span style="color:#75715e">// you need to iterate all triangles in the object.
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span>(cosnt Triangle<span style="color:#f92672">&amp;</span> triangle : triangles){
         unsinged minX, minY, maxX, maxY;
@@ -310,6 +310,14 @@ Therefore, It is possible to calculate every \(x\), \(y\) and \(z\) for each cen
 So pretend \(A^\prime\), \(B^\prime\) and \(C^\prime\) are the position(in 3D space) component of each vertex.</p>
 <p>Then finally, each centroid in 3D coordinate \(P^\prime\) is: \(P^\prime = xA^\prime + yB^\prime + zC^\prime\).<br>
 Also, you can apply it in every component of the vertex. Such as the normal direction. But in this case, make sure to normalize after calculating \(P^\prime\).</p>
+<br/><br/>
+<h2 id="one-pixel-multiple-sample-points">One pixel, multiple sample points</h2>
+<p>I briefly mentioned on the pseudo-code above that &lsquo;multiple triangles can exist in the same object&rsquo;.</p>
+<p>And let&rsquo;s think about what will be happened if one more triangle is located in the same space.<br>
+Probably, with a high chance, many centroids will be positioned on the same pixel. And one of the common cases you can see is a &lsquo;rectangle&rsquo;.<br>
+So, every single primitive are expressed by a sequence of triangles. Hence, the rectangle is not an exemption. More exactly, the rectangle is made up of two triangles.</p>
+<p>Then where will it be? Which spot have multiple centroids in the rectangle? You would intuitively notice, it&rsquo;s a diagonal side of the rectangle.<br>
+The diagonal side of the rectangle, in other words, is a spot that one edge on each side of two triangles is ovelapped.</p>
 <br/><br/>
 <h2 id="references">References</h2>
 <ul>
