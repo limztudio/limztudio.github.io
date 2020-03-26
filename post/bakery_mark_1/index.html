@@ -294,7 +294,7 @@ Polygon calculateIntersectGeneratedPolygon(<span style="color:#66d9ef">const</sp
 <h2 id="centroids-become-sample-points-in-3d-space">Centroids become sample points in 3D space</h2>
 <p>We&rsquo;ve been watching how to find centroids in 2D space. And now it&rsquo;s time to convert these in 3D space to use them as an actual sample point.</p>
 <p>And fortunately, there was a good tool to convert my centroids. it&rsquo;s called <a href="https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates">Barycentric coordinates</a>.<br>
-According to the article(in the link above), it&rsquo;s possible to convert each centroid with down below:</p>
+According to the article(in the link above), it&rsquo;s possible to convert each centroid by down below:</p>
 <blockquote>
 <ol>
 <li>Here you have a triangle \(\triangle ABC\).</li>
@@ -304,6 +304,12 @@ According to the article(in the link above), it&rsquo;s possible to convert each
 <li>Finally, you can calculate \(P\) by the following: \(P = xA + yB + zC\).</li>
 </ol>
 </blockquote>
+<p>So the first, when it comes to the current situation, the \(\triangle ABC\) represents each triangle of the object. And the \(P\) is each calculated centroid in the triangle.<br>
+Therefore, It is possible to calculate every \(x\), \(y\) and \(z\) for each centroid.</p>
+<p>And second, you would remember \(A\), \(B\) and \(C\) each point of the triangle are actually vertices of geometry in 3D space. And here just used its UV component of each vertex.<br>
+So pretend \(A^\prime\), \(B^\prime\) and \(C^\prime\) are the position(in 3D space) component of each vertex.</p>
+<p>Then finally, each centroid in 3D coordinate \(P^\prime\) is: \(P^\prime = xA^\prime + yB^\prime + zC^\prime\).<br>
+Also, you can apply it in every component of the vertex. Such as the normal direction. But in this case, make sure to normalize after calculating \(P^\prime\).</p>
 <br/><br/>
 <h2 id="references">References</h2>
 <ul>
