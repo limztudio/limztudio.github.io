@@ -8,9 +8,10 @@
 	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
 	<meta name="description" content="">
 	<meta property="og:title" content="My first lightmap baker: Bakery" />
-<meta property="og:description" content="It&rsquo;s been a couple of years. Since I started making my own lightmap baker.
+<meta property="og:description" content="A simple Sponza Palace baked by my first lightmap baker. Only one directional light setup in the scene. Looking pretty rough. 
+It&rsquo;s been a couple of years. Since I started making my own lightmap baker.
 And before I start this article, I finished this project. Although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&hellip;
-But now I&rsquo;m planning to make a Mark.II of it. Because I judged here are too many things to be changed. Also, I won&rsquo;t use radiosity anymore." />
+But now I&rsquo;m planning to make a Mark." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://limztudio.github.io/post/bakery_mark_1/" />
 <meta property="article:published_time" content="2020-03-13T22:23:10+09:00" />
@@ -18,9 +19,10 @@ But now I&rsquo;m planning to make a Mark.II of it. Because I judged here are to
 
 	<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="My first lightmap baker: Bakery"/>
-<meta name="twitter:description" content="It&rsquo;s been a couple of years. Since I started making my own lightmap baker.
+<meta name="twitter:description" content="A simple Sponza Palace baked by my first lightmap baker. Only one directional light setup in the scene. Looking pretty rough. 
+It&rsquo;s been a couple of years. Since I started making my own lightmap baker.
 And before I start this article, I finished this project. Although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&hellip;
-But now I&rsquo;m planning to make a Mark.II of it. Because I judged here are too many things to be changed. Also, I won&rsquo;t use radiosity anymore."/>
+But now I&rsquo;m planning to make a Mark."/>
 
 	<link rel="dns-prefetch" href="//fonts.googleapis.com">
 	<link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -78,7 +80,24 @@ But now I&rsquo;m planning to make a Mark.II of it. Because I judged here are to
 	</span>
 </div></div>
 		</header><div class="content post__content clearfix">
-			<p>It&rsquo;s been a couple of years. Since I started making my own lightmap baker.<br>
+			<p><br/><br/>
+
+
+
+<div class="center">
+  <img
+    src="https://github.com/limztudio/blog_radiosity_repo/raw/master/sponza.png"
+    alt="Sponza"
+    decoding="async"
+  />
+</div>
+
+
+<div style="text-align: center; font-style: italic;">
+A simple Sponza Palace baked by my first lightmap baker. Only one directional light setup in the scene. Looking pretty rough.
+</div>
+<br/><br/></p>
+<p>It&rsquo;s been a couple of years. Since I started making my own lightmap baker.<br>
 And before I start this article, I finished this project. Although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&hellip;<br>
 But now I&rsquo;m planning to make a Mark.II of it. Because I judged here are too many things to be changed. Also, I won&rsquo;t use radiosity anymore. Instead, I will use raytrace with monte carlo method for my next project.</p>
 <p>Anyway, here&rsquo;s how I created it.</p>
@@ -336,6 +355,11 @@ Figure 03: The rectangle on a UV(2D) space. Pixels are each grid. And the orange
 </div>
 <br/><br/></p>
 <p>We just saw the case two centroids are placed in one pixel. But then again, there are so many possibilities that more than two centroids placing in one pixel. Depending on how the triangles allocated.</p>
+<br/><br/>
+<h2 id="one-pixel-multiple-sample-points-whats-the-matter">One pixel, multiple sample points: What&rsquo;s the matter?</h2>
+<p>Then, I asked myself what is the actual problem if each result of radiosity is stored in the same pixel. To solve this problem, I needed to remember how I use lightmap.
+The final result of lightmap that I&rsquo;m gonna make will be used as texture when primitives in a scene are rendered.<br>
+So if multiple results of radiosity are stored in a pixel, it will cause an unexpected(or weird looking) result when a shader samples the position of the pixel while rendering primitives.</p>
 <br/><br/>
 <h2 id="references">References</h2>
 <ul>
