@@ -8,10 +8,9 @@
 	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
 	<meta name="description" content="">
 	<meta property="og:title" content="My first lightmap baker: Bakery" />
-<meta property="og:description" content="A simple Sponza Palace baked by my first lightmap baker. Only one directional light setup in the scene. Looking pretty rough. 
+<meta property="og:description" content="A simple Sponza Palace baked by my first lightmap baker. Only one directional light and Skylight(ambient light) setup in the scene. Looking pretty rough. 
 It&rsquo;s been a couple of years. Since I started making my own lightmap baker.
-And before I start this article, I finished this project. Although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&hellip;
-But now I&rsquo;m planning to make a Mark." />
+And before I start this article, I finished this project. Although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&hellip;" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://limztudio.github.io/post/bakery_mark_1/" />
 <meta property="article:published_time" content="2020-03-13T22:23:10+09:00" />
@@ -19,10 +18,9 @@ But now I&rsquo;m planning to make a Mark." />
 
 	<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="My first lightmap baker: Bakery"/>
-<meta name="twitter:description" content="A simple Sponza Palace baked by my first lightmap baker. Only one directional light setup in the scene. Looking pretty rough. 
+<meta name="twitter:description" content="A simple Sponza Palace baked by my first lightmap baker. Only one directional light and Skylight(ambient light) setup in the scene. Looking pretty rough. 
 It&rsquo;s been a couple of years. Since I started making my own lightmap baker.
-And before I start this article, I finished this project. Although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&hellip;
-But now I&rsquo;m planning to make a Mark."/>
+And before I start this article, I finished this project. Although I need a lot of things to do: such as optimization, complete some minor features and fix many bugs&hellip;"/>
 
 	<link rel="dns-prefetch" href="//fonts.googleapis.com">
 	<link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -94,7 +92,7 @@ But now I&rsquo;m planning to make a Mark."/>
 
 
 <div style="text-align: center; font-style: italic;">
-A simple Sponza Palace baked by my first lightmap baker. Only one directional light setup in the scene. Looking pretty rough.
+A simple Sponza Palace baked by my first lightmap baker. Only one directional light and Skylight(ambient light) setup in the scene. Looking pretty rough.
 </div>
 <br/><br/></p>
 <p>It&rsquo;s been a couple of years. Since I started making my own lightmap baker.<br>
@@ -108,7 +106,7 @@ I got a request that our game needs indirect lighting technique to make it looks
 And at that time, I don&rsquo;t have any knowledge of indirect light. So I had no idea where do I start it.<br>
 But thankfully, one of my bosses told me a keyword. <em><strong>Radiosity</strong></em>.</p>
 <p>So the first I read was <a href="https://en.wikipedia.org/wiki/Radiosity_(computer_graphics)">Radiosity on Wikipedia</a>. Then I could learn how it working. But still, needed something more detail or an actual example of implementation.<br>
-And I found <a href="https://mynameismjp.wordpress.com/2011/01/31/radiosity-dx11-style/">Radiosity, DX11 style</a>. It described how to calculate irradiance in every vertex, and bake them using <a href="https://en.wikipedia.org/wiki/Spherical_harmonics">Spherical harmonics</a> to store in each vertex.<br>
+And I found <a href="https://mynameismjp.wordpress.com/2011/01/31/radiosity-dx11-style/">Radiosity, DX11 style</a>. It described how to calculate irradiance(On here, it&rsquo;s a result of radiosity calculation) in every vertex, and bake them using <a href="https://en.wikipedia.org/wiki/Spherical_harmonics">Spherical harmonics</a> to store in each vertex.<br>
 But in my case, irradiance needed to be calculated in every texel of each object. So I decided I better make it possible to store in texels first.</p>
 <br/><br/>
 <h2 id="find-sample-points">Find sample points</h2>
@@ -324,7 +322,8 @@ According to the article(in the link above), it&rsquo;s possible to convert each
 </ol>
 </blockquote>
 <p>So the first, when it comes to the current situation, the \(\triangle ABC\) represents each triangle of the object. And the \(P\) is each calculated centroid(note that this is not a centroid of \(\triangle ABC\). I&rsquo;m talking about the centroids that we&rsquo;ve calculated above.) in the triangle.<br>
-Therefore, It is possible to calculate every \(x\), \(y\) and \(z\) for each centroid.</p>
+Therefore, It is possible to find \(x\), \(y\) and \(z\) for each centroid.<br>
+Also, you don&rsquo;t have to calculate every \(x\), \(y\) and \(z\) by calculating each area, but two of them. Since \(x + y + z = 1\).</p>
 <p>And second, you would remember \(A\), \(B\) and \(C\) each point of the triangle are actually vertices of geometry in 3D space. And here just used its UV component of each vertex.<br>
 So pretend \(A^\prime\), \(B^\prime\) and \(C^\prime\) are the position(in 3D space) component of each vertex.</p>
 <p>Then finally, each centroid in 3D coordinate \(P^\prime\) is: \(P^\prime = xA^\prime + yB^\prime + zC^\prime\).<br>
@@ -357,9 +356,41 @@ Figure 03: The rectangle on a UV(2D) space. Pixels are each grid. And the orange
 <p>We just saw the case two centroids are placed in one pixel. But then again, there are so many possibilities that more than two centroids placing in one pixel. Depending on how the triangles allocated.</p>
 <br/><br/>
 <h2 id="one-pixel-multiple-sample-points-whats-the-matter">One pixel, multiple sample points: What&rsquo;s the matter?</h2>
-<p>Then, I asked myself what is the actual problem if each result of radiosity is stored in the same pixel. To solve this problem, I needed to remember how I use lightmap.
+<p>Then, I asked myself what is the actual problem if each irradiance is stored in the same pixel. To solve this problem, I needed to remember how I use lightmap.
 The final result of lightmap that I&rsquo;m gonna make will be used as texture when primitives in a scene are rendered.<br>
-So if multiple results of radiosity are stored in a pixel, it will cause an unexpected(or weird looking) result when a shader samples the position of the pixel while rendering primitives.</p>
+So if multiple irradiances are stored in a pixel, it will cause an unexpected(or weird looking) result when a shader samples the position of the pixel while rendering primitives.</p>
+<p>But there was one more thing I had to remember. I said it will cause an unexpected result. But somehow it will be pretty expected. What I meant is, every triangle in the UV space, I pretended they&rsquo;re not overlapped each other(figure. how UV is pelted in 3ds max).<br>
+And that means, for the sample points that each of their irradiances are needed to be stored in the same place, they will be quite close together in 3D space. So I instantly thought if I calculate an average position for the overlapped sample points, then compare with the result between original and this one.</p>
+<p>And this how I calculate irradiance in both original and average position.</p>
+<p><br/><br/>
+The original:</p>
+<blockquote>
+<ol>
+<li>Calculate irradiance on each sample point.</li>
+<li>Calculate the area of each polygon whose centroid in 3D space is each sample point.</li>
+<li>Sum all the area in a pixel. And divide each area by this summation(I&rsquo;m gonna call it &lsquo;Participation rate&rsquo;).</li>
+<li>Multiply each irradiance by each &lsquo;Participation rate&rsquo;. Then sum them together.</li>
+<li>This summation is the irradiance of this pixel. (Weighted averaged irradiance)</li>
+</ol>
+</blockquote>
+<p><br/><br/>
+The averaged position:</p>
+<blockquote>
+<ol>
+<li>Calculate the area of each polygon whose centroid in 3D space is each sample point.</li>
+<li>Add all the area in a pixel. And divide each area by this summation(This is &lsquo;Participation rate&rsquo; which is the same thing above).</li>
+<li>Multiply position and normal of each sample point by each &lsquo;Participation rate&rsquo;. Then sum each position and normal separately.
+Also, don&rsquo;t forget to normalize the &lsquo;summation of normals&rsquo;.</li>
+<li>Shoot a ray &lsquo;summation of normals&rsquo; direction at the &lsquo;summation of positions&rsquo;. And test if there are any intersections between the polygons which are belonging with current pixel.</li>
+<li>Find the farthest intersection. That is a new sample point position of the current pixel.</li>
+<li>If there is nothing intersected, Shoot a ray negative &lsquo;summation of normals&rsquo; direction at the same point. And samely, test if there are any intersections between the polygons which are belonging with current pixel.</li>
+<li>Find the nearest intersection. That is the new sample point position of the current pixel.</li>
+<li>If nothing intersected still, &lsquo;summation of positions&rsquo; is the new sample point position of the current pixel.</li>
+<li>Calculate irradiance with &lsquo;summation of normals&rsquo; at the new sample point position.</li>
+</ol>
+</blockquote>
+<p><br/><br/>
+And thankfully there was not much difference between them.</p>
 <br/><br/>
 <h2 id="references">References</h2>
 <ul>
