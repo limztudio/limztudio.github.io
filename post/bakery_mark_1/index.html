@@ -359,11 +359,10 @@ Figure 03: The rectangle on a UV(2D) space. Pixels are each grid. And the orange
 <p>Then, I asked myself what is the actual problem if each irradiance is stored in the same pixel. To solve this problem, I needed to remember how I use lightmap.
 The final result of lightmap that I&rsquo;m gonna make will be used as texture when primitives in a scene are rendered.<br>
 So if multiple irradiances are stored in a pixel, it will cause an unexpected(or weird looking) result when a shader samples the position of the pixel while rendering primitives.</p>
-<p>But there was one more thing I had to remember. I said it will cause an unexpected result. But somehow it will be pretty expected. What I meant is, every triangle in the UV space, I pretended they&rsquo;re not overlapped each other(figure. how UV is pelted in 3ds max).<br>
+<p>But there was one more thing I had to remember. I said it will cause an unexpected result. But somehow it will be pretty expected. What I meant is, every triangle in the UV space, I pretended <strong>they&rsquo;re not overlapped each other</strong>(figure. how UV is pelted in 3ds max).<br>
 And that means, for the sample points that each of their irradiances are needed to be stored in the same place, they will be quite close together in 3D space. So I instantly thought if I calculate an average position for the overlapped sample points, then compare with the result between original and this one.</p>
-<p>And this how I calculate irradiance in both original and average position.</p>
-<p><br/><br/>
-The original:</p>
+<p>And this is how I calculate irradiance in both original and average position.</p>
+<p>The original:</p>
 <blockquote>
 <ol>
 <li>Calculate irradiance on each sample point.</li>
@@ -373,8 +372,7 @@ The original:</p>
 <li>This summation is the irradiance of this pixel. (Weighted averaged irradiance)</li>
 </ol>
 </blockquote>
-<p><br/><br/>
-The averaged position:</p>
+<p>The averaged position:</p>
 <blockquote>
 <ol>
 <li>Calculate the area of each polygon whose centroid in 3D space is each sample point.</li>
@@ -389,8 +387,7 @@ Also, don&rsquo;t forget to normalize the &lsquo;summation of normals&rsquo;.</l
 <li>Calculate irradiance with &lsquo;summation of normals&rsquo; at the new sample point position.</li>
 </ol>
 </blockquote>
-<p><br/><br/>
-And thankfully there was not much difference between them.</p>
+<p>And thankfully there was not much difference between them.</p>
 <br/><br/>
 <h2 id="references">References</h2>
 <ul>
