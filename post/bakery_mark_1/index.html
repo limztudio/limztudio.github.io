@@ -185,7 +185,7 @@ And if the box has a larger height than width, chop it in a horizontal direction
 Figure 02: A flow of find centroids. The yellow squares are the current search region. The black squares are discarded region. And black points are the centroids.
 </div>
 <br/><br/></p>
-<p>Also, I remembered <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm</a>. To find out the &lsquo;generated polygon&rsquo; between interested two polygons.<br>
+<p>Also, I remembered <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm</a>. To find out the &lsquo;generated polygon&rsquo; between intersected two polygons.<br>
 On the article, they referred that if the subject polygon is concave, the output &lsquo;generated polygon&rsquo; may have extraneous lines. Since it has only one vertex list output. So somehow this may cause a problem to find out centroid depending on an algorithm.<br>
 But luckily, the subject polygon here always be a triangle, so it will never be concaved.</p>
 <p>And here is a C++ like pseudo-code of my idea. I used <a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a>. Which allowed me easily parallelize my code. Because it has its own task scheduler.<br>
