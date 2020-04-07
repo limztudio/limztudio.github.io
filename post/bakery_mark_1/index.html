@@ -9,7 +9,7 @@
 	<meta name="description" content="">
 	<meta property="og:title" content="My first lightmap baker: Bakery" />
 <meta property="og:description" content="A simple Sponza Palace baked by my first lightmap baker. Only one directional light and Skylight(ambient light) setup in the scene. Looking pretty rough. 
- And the lightmap of the whole scene above. It has information about both direct light and indirect light colour. 
+ And the lightmap of the whole scene above. It has information about both direct light and indirect light colour.  
 It&rsquo;s been a couple of years. Since I started making my own lightmap baker.
 And before I start this article, I finished this project." />
 <meta property="og:type" content="article" />
@@ -20,7 +20,7 @@ And before I start this article, I finished this project." />
 	<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="My first lightmap baker: Bakery"/>
 <meta name="twitter:description" content="A simple Sponza Palace baked by my first lightmap baker. Only one directional light and Skylight(ambient light) setup in the scene. Looking pretty rough. 
- And the lightmap of the whole scene above. It has information about both direct light and indirect light colour. 
+ And the lightmap of the whole scene above. It has information about both direct light and indirect light colour.  
 It&rsquo;s been a couple of years. Since I started making my own lightmap baker.
 And before I start this article, I finished this project."/>
 
@@ -110,7 +110,7 @@ A simple Sponza Palace baked by my first lightmap baker. Only one directional li
 
 
 <div style="text-align: center; font-style: italic;">
-And the lightmap of the whole scene above. It has information about both direct light and indirect light colour.
+And the lightmap of the whole scene above. It has information about both direct light and indirect light colour. 
 </div>
 <br/><br/></p>
 <p>It&rsquo;s been a couple of years. Since I started making my own lightmap baker.<br>
@@ -124,7 +124,7 @@ I got a request that our game needs indirect lighting technique to make it looks
 And at that time, I don&rsquo;t have any knowledge of indirect light. So I had no idea where do I start it.<br>
 But thankfully, one of my bosses told me a keyword. <em><strong>Radiosity</strong></em>.</p>
 <p>So the first I read was <a href="https://en.wikipedia.org/wiki/Radiosity_(computer_graphics)">Radiosity on Wikipedia</a>. Then I could learn how it working. But still, needed something more detail or an actual example of implementation.<br>
-And I found <a href="https://mynameismjp.wordpress.com/2011/01/31/radiosity-dx11-style/">Radiosity, DX11 style</a>. It described how to calculate irradiance(On here, it&rsquo;s a result of radiosity calculation) in every vertex, and bake them using <a href="https://en.wikipedia.org/wiki/Spherical_harmonics">Spherical harmonics</a> to store in each vertex.<br>
+And I found <a href="https://mynameismjp.wordpress.com/2011/01/31/radiosity-dx11-style/">Radiosity, DX11 style</a>. It described how to calculate irradiance(On here, it&rsquo;s the result of radiosity calculation) in every vertex, and bake them using <a href="https://en.wikipedia.org/wiki/Spherical_harmonics">Spherical harmonics</a> to store in each vertex.<br>
 But in my case, irradiance needed to be calculated in every texel of each object. So I decided I better make it possible to store in texels first.</p>
 <br/><br/>
 <h2 id="find-sample-points">Find sample points</h2>
@@ -203,7 +203,7 @@ And if the box has a larger height than width, chop it in a horizontal direction
 Figure 02: A flow of find centroids. The yellow squares are the current search region. The black squares are discarded region. And black points are the centroids.
 </div>
 <br/><br/></p>
-<p>Also, I remembered <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm</a>. To find out the &lsquo;generated polygon&rsquo; between intersected two polygons.<br>
+<p>Also, I remembered <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm</a> to find out the &lsquo;generated polygon&rsquo; between intersected two polygons.<br>
 On the article, they referred that if the subject polygon is concave, the output &lsquo;generated polygon&rsquo; may have extraneous lines. Since it has only one vertex list output. So somehow this may cause a problem to find out centroid depending on an algorithm.<br>
 But luckily, the subject polygon here always be a triangle, so it will never be concaved.</p>
 <p>And here is a C++ like pseudo-code of my idea. I used <a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a>. Which allowed me easily parallelize my code. Because it has its own task scheduler.<br>
@@ -377,7 +377,22 @@ Figure 03: The rectangle on a UV(2D) space. Pixels are each grid. And the orange
 <p>Then, I asked myself what is the actual problem if each irradiance is stored in the same pixel. To solve this problem, I needed to remember how I use lightmap.
 The final result of lightmap that I&rsquo;m gonna make will be used as texture when primitives in a scene are rendered.<br>
 So if multiple irradiances are stored in a pixel, it will cause an unexpected(or weird looking) result when a shader samples the position of the pixel while rendering primitives.</p>
-<p>But there was one more thing I had to remember. I said it will cause an unexpected result. But somehow it will be pretty expected. What I meant is, every triangle in the UV space, I pretended <strong>they&rsquo;re not overlapped each other</strong>(figure. how UV is pelted in 3ds max).<br>
+<p>
+
+
+<div class="center">
+  <img
+    src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure04.gif"
+    alt="Figure04"
+    decoding="async"
+  />
+</div>
+
+
+<div style="text-align: center; font-style: italic;">
+Figure 04: A lightmap UV of an object in the scene. You can see there is no overlapping or duplication between triangles.
+</div></p>
+<p>But there was one more thing I had to remember. I said it will cause an unexpected result. But somehow it will be pretty expected. What I meant is, every triangle in the UV space, I pretended <strong>they&rsquo;re not overlapped each other</strong>. See <em>Figure 04</em>.<br>
 And that means, for the sample points that each of their irradiances are needed to be stored in the same place, they will be quite close together in 3D space. So I instantly thought if I calculate an average position for the overlapped sample points, then compare with the result between original and this one.</p>
 <p>And this is how I calculate irradiance in both original and average position.</p>
 <p>The original:</p>
