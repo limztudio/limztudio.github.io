@@ -208,7 +208,7 @@ On the article, they referred that if the subject polygon is concave, the output
 But luckily, the subject polygon here always be a triangle, so it will never be concaved.</p>
 <p>And here is a C++ like pseudo-code of my idea. I used <a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a>. Which allowed me easily parallelize my code. Because it has its own task scheduler.<br>
 If you&rsquo;re working with <strong>MVSC</strong>, you can use <strong>PPL</strong>(since <strong>MVSC 2010</strong>) instead of <strong>TBB</strong> library. Seems mostly it&rsquo;s possible to switch between them. Though it looks like <strong>TBB</strong> has more extra features than <strong>PPL</strong>.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;tbb/task_group.h&#34;</span><span style="color:#75715e">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;tbb/task_group.h&#34;</span><span style="color:#75715e">
 </span><span style="color:#75715e"></span>
 ...
 
@@ -298,7 +298,7 @@ Polygon calculateIntersectGeneratedPolygon(<span style="color:#66d9ef">const</sp
     
     <span style="color:#75715e">// since multiple triangles can exist in the same object,
 </span><span style="color:#75715e"></span>    <span style="color:#75715e">// you need to iterate all triangles in the object.
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span>(cosnt Triangle<span style="color:#f92672">&amp;</span> triangle : triangles){
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">const</span> Triangle<span style="color:#f92672">&amp;</span> triangle : triangles){
         unsinged minX, minY, maxX, maxY;
         
         <span style="color:#75715e">// find min/max UV coordinate of each &#39;triangle&#39;
