@@ -9,7 +9,7 @@
 	<meta name="description" content="">
 	<meta property="og:title" content="My first lightmap baker: Bakery" />
 <meta property="og:description" content="A simple Sponza Palace baked by my first lightmap baker. Only one directional light and Skylight(ambient light) setup in the scene. Looking pretty rough. 
- And the lightmap of the whole scene above. It has information about both direct light and indirect light colour.  
+ And the lightmap of the whole scene above. It has an information of both direct light and indirect light colour.  
 It&rsquo;s been a couple of years. Since I started making my own lightmap baker.
 And before I start this article, I finished this project." />
 <meta property="og:type" content="article" />
@@ -20,7 +20,7 @@ And before I start this article, I finished this project." />
 	<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="My first lightmap baker: Bakery"/>
 <meta name="twitter:description" content="A simple Sponza Palace baked by my first lightmap baker. Only one directional light and Skylight(ambient light) setup in the scene. Looking pretty rough. 
- And the lightmap of the whole scene above. It has information about both direct light and indirect light colour.  
+ And the lightmap of the whole scene above. It has an information of both direct light and indirect light colour.  
 It&rsquo;s been a couple of years. Since I started making my own lightmap baker.
 And before I start this article, I finished this project."/>
 
@@ -110,7 +110,7 @@ A simple Sponza Palace baked by my first lightmap baker. Only one directional li
 
 
 <div style="text-align: center; font-style: italic;">
-And the lightmap of the whole scene above. It has information about both direct light and indirect light colour. 
+And the lightmap of the whole scene above. It has an information of both direct light and indirect light colour. 
 </div>
 <br/><br/></p>
 <p>It&rsquo;s been a couple of years. Since I started making my own lightmap baker.<br>
@@ -132,13 +132,13 @@ But in my case, irradiance needed to be calculated in every texel of each object
 <p>So my idea to find out each sample point was:</p>
 <blockquote>
 <ol>
-<li>Give a specific size of a segment. The number of sample points on an object surface will depend on this segment size.</li>
-<li>Multiply each UV position by the segment size. The result of each UV position(let&rsquo;s call this &lsquo;vertex on pixel&rsquo;) will be a position on its lightmap in pixel.</li>
+<li>Give a specific size of segment. The number of sample points on the object surface will depend on this segment size.</li>
+<li>Multiply each UV position by the segment size. The result of each UV position(let&rsquo;s call this &lsquo;vertex on pixel&rsquo;) will be a position of its lightmap in pixel.</li>
 <li>Connect every &lsquo;vertex on pixel&rsquo; by their index(vertex order). Then you will get polygons on their lightmap(and let&rsquo;s call this &lsquo;polygon on pixel&rsquo;).</li>
-<li>Put each &lsquo;polygon on pixel&rsquo; on a grid whose distance from a line to line is 1 pixel.</li>
+<li>Put each &lsquo;polygon on pixel&rsquo; on a grid whose distance from line to line is 1 pixel.</li>
 <li>Now you can see an intersection between every &lsquo;polygon on pixel&rsquo; and 1x1 squares made by the grid.</li>
 <li>Find every centroid in every polygon made by the intersection.</li>
-<li>Convert every centroid to 3D space. You can earn the position and normal direction of each sample point.</li>
+<li>Convert every centroid to 3D space. You will earn position and normal direction of each sample point.</li>
 </ol>
 </blockquote>
 <p>And <em>Figure 01</em> is how are the steps I described working on:<br>
@@ -155,16 +155,16 @@ But in my case, irradiance needed to be calculated in every texel of each object
 
 
 <div style="text-align: center; font-style: italic;">
-Figure 01: A flow of find sample points in 2D(UV) space. The green points are the each of &#39;vertex on pixel&#39;. The red squares are intersections. And the black points are the centroids to be calculated by sample point on 3D space.
+Figure 01: A flow of finding sample points in 2D(UV) space. The green points are each of &#39;vertex on pixel&#39;. The red squares are intersections. And the black points are the centroids to be calculated by sample point on 3D space.
 </div>
 <br/><br/></p>
 <p>Then next I thought was how do I come up with an algorithm to find out these centroids on the UV space.<br>
 And after few times of attempt, I got an idea:</p>
 <blockquote>
 <p>It&rsquo;s quite simple. Guess the segment size is 32.<br>
-Then let&rsquo;s start off making a 32x32 square on the UV space.</p>
+Then let&rsquo;s start off making 32x32 square on the UV space.</p>
 <ol>
-<li>Check if the box(square) and triangle(polygon on pixel) are intersected. And the result of the intersection can be expressed by these four:
+<li>Check if a box(square) and a triangle(polygon on pixel) are intersected. And the result of intersection can be expressed by these four:
 <ul>
 <li>Triangle contains box</li>
 <li>Box contains triangle</li>
@@ -173,20 +173,20 @@ Then let&rsquo;s start off making a 32x32 square on the UV space.</p>
 </ul>
 </li>
 <li>If the triangle contains the box, every 1x1 square in the box is contained by the triangle.<br>
-Therefore, chop the box in every 1x1 square. Then calculate the centroid of each square.</li>
+Therefore, chop the box in every 1x1 square. Then calculate centroid of each square.</li>
 <li>If the box contains the triangle or they&rsquo;re just intersected, chop the box in half and back to step 1. Then perform this procedure again for chopped two boxes.<br>
-And if the box has a larger height than width, chop it in a horizontal direction. Or else, chop it in a vertical direction.</li>
-<li>If nothing intersected between them, you can finish this loop.</li>
-<li>If the box size became 1x1, you can also finish this loop. After doing this following subsequential steps:
+And if the box has larger height than width, chop it in horizontal direction. Or else, chop it in vertical direction.</li>
+<li>If nothing intersected between them, this loop can be finished.</li>
+<li>If the box size became 1x1, the loop also can be finished. But after doing this following subsequential steps:
 <ul>
-<li>If the triangle contains the box, calculate the centroid of the box.</li>
-<li>If the box contains the triangle, calculate the centroid of the triangle.</li>
+<li>If the triangle contains the box, calculate centroid of the box.</li>
+<li>If the box contains the triangle, calculate centroid of the triangle.</li>
 <li>If they&rsquo;re just intersected, find a &lsquo;generated polygon&rsquo;(which is generated by the intersection between them). and calculate its centroid.</li>
 </ul>
 </li>
 </ol>
 </blockquote>
-<p>And here&rsquo;s <em>Figure 02</em>. As I mentioned, when the boxes chopped in half, the chopped two boxes need to perform the above procedure individually. But I depicted only one of the box here for an explanation. 
+<p>And here&rsquo;s <em>Figure 02</em>. As I mentioned, when boxes chopped in half, chopped two boxes need to perform the above procedure individually. But I depicted only one of the box here for explanation. 
 
 
 
@@ -200,13 +200,13 @@ And if the box has a larger height than width, chop it in a horizontal direction
 
 
 <div style="text-align: center; font-style: italic;">
-Figure 02: A flow of find centroids. The yellow squares are the current search region. The black squares are discarded region. And black points are the centroids.
+Figure 02: A flow of finding centroids. The yellow squares are current searching region. The black squares are discarded region. And black points are centroids.
 </div>
 <br/><br/></p>
-<p>Also, I remembered <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm</a> to find out the &lsquo;generated polygon&rsquo; between intersected two polygons.<br>
-On the article, they referred that if the subject polygon is concave, the output &lsquo;generated polygon&rsquo; may have extraneous lines. Since it has only one vertex list output. So somehow this may cause a problem to find out centroid depending on an algorithm.<br>
-But luckily, the subject polygon here always be a triangle, so it will never be concaved.</p>
-<p>And here is a C++ like pseudo-code of my idea. I used <a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a>. Which allowed me easily parallelize my code. Because it has its own task scheduler.<br>
+<p>Also, I remembered <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm</a> to find out &lsquo;generated polygon&rsquo; between intersected two polygons.<br>
+On the article, they mentioned that if subject polygon is concave, the output &lsquo;generated polygon&rsquo; may have extraneous lines. Since it has only one vertex list output. So somehow this may cause a problem to find out centroid depending on an algorithm.<br>
+But luckily, subject polygon here always be a triangle, so it will never be concaved.</p>
+<p>And here is C++ like pseudo-code of my idea. I used <a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a>. Which allowed me easily parallelize my code. Because it has its own task scheduler.<br>
 If you&rsquo;re working with <strong>MVSC</strong>, you can use <strong>PPL</strong>(since <strong>MVSC 2010</strong>) instead of <strong>TBB</strong> library. Seems mostly it&rsquo;s possible to switch between them. Though it looks like <strong>TBB</strong> has more extra features than <strong>PPL</strong>.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;tbb/task_group.h&#34;</span><span style="color:#75715e">
 </span><span style="color:#75715e"></span>
@@ -220,8 +220,8 @@ tbb<span style="color:#f92672">::</span>task_group worker;
 ...
 
 Polygon calculateIntersectGeneratedPolygon(<span style="color:#66d9ef">const</span> Polygon<span style="color:#f92672">&amp;</span> clipPolygon, <span style="color:#66d9ef">const</span> Polygon<span style="color:#f92672">&amp;</span> subjectPolygon){
-    <span style="color:#75715e">// use Sutherland–Hodgman algorithm to calculate the &#39;generated polygon&#39;.
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// mind you that the &#39;subjectPolygon&#39; will be clipped by each side of the &#39;clipPolygon&#39;.
+    <span style="color:#75715e">// use Sutherland–Hodgman algorithm to calculate &#39;generated polygon&#39;.
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// mind you that &#39;subjectPolygon&#39; will be clipped by each side of &#39;clipPolygon&#39;.
 </span><span style="color:#75715e"></span>    ...
 }
 
@@ -242,7 +242,7 @@ Polygon calculateIntersectGeneratedPolygon(<span style="color:#66d9ef">const</sp
 </span><span style="color:#75715e"></span>    <span style="color:#75715e">// &#34;nothing intersected&#34;
 </span><span style="color:#75715e"></span>    IntersectState state <span style="color:#f92672">=</span> box.intersect(triangle);
     
-    <span style="color:#75715e">// if the &#39;box&#39; has 1x1 of size, you can&#39;t chop it anymore.
+    <span style="color:#75715e">// if &#39;box&#39; has 1x1 of size, you can&#39;t chop it anymore.
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span>(box.width <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">&amp;&amp;</span> box.height <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>){
         <span style="color:#66d9ef">if</span>(state <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;triangle contains box&#34;</span>){
             centroids.add(box.calCentroid());
@@ -251,7 +251,7 @@ Polygon calculateIntersectGeneratedPolygon(<span style="color:#66d9ef">const</sp
             centroids.add(triangle.calCentroid());
         }
         <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span>(state <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;they&#39;re intersected&#34;</span>){
-            <span style="color:#75715e">// find a polygon generated by the intersection between &#39;box&#39; and &#39;triangle&#39;.
+            <span style="color:#75715e">// find polygon generated by intersection between &#39;box&#39; and &#39;triangle&#39;.
 </span><span style="color:#75715e"></span>            <span style="color:#75715e">// then calculate its centroid.
 </span><span style="color:#75715e"></span>            centroids.add(calculateIntersectGeneratedPolygon(box, triangle).calCentroid());
         }
@@ -259,7 +259,7 @@ Polygon calculateIntersectGeneratedPolygon(<span style="color:#66d9ef">const</sp
     <span style="color:#66d9ef">else</span>{
         <span style="color:#66d9ef">if</span>(state <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;triangle contains box&#34;</span>){
             <span style="color:#75715e">// chop &#39;box&#39; in every 1x1 square.
-</span><span style="color:#75715e"></span>            <span style="color:#75715e">// then calculate the centroid of each square.
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// then calculate centroid of each square.
 </span><span style="color:#75715e"></span>            <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">unsigned</span> y <span style="color:#f92672">=</span> top; y <span style="color:#f92672">&lt;</span> bottom; <span style="color:#f92672">++</span>y){
                 <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">unsigned</span> x <span style="color:#f92672">=</span> left; x <span style="color:#f92672">&lt;</span> right; <span style="color:#f92672">++</span>x){
                     Box boxLocal(x, y, x <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, y <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
@@ -270,8 +270,8 @@ Polygon calculateIntersectGeneratedPolygon(<span style="color:#66d9ef">const</sp
         }
         <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span>(state <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;box contains triangle&#34;</span> <span style="color:#f92672">||</span> state <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;they&#39;re intersected&#34;</span>){
             <span style="color:#75715e">// chop current &#39;box&#39; in half and execute this function again.
-</span><span style="color:#75715e"></span>            <span style="color:#75715e">// if the &#39;box&#39; has a larger height than width, chop it in a horizontal direction.
-</span><span style="color:#75715e"></span>            <span style="color:#75715e">// or else, chop it in a vertical direction.
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// if &#39;box&#39; has larger height than width, chop it in horizontal direction.
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// or else, chop it in vertical direction.
 </span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span>(box.height <span style="color:#f92672">&gt;</span> box.width){
                 worker.run([<span style="color:#f92672">&amp;</span>]{
                     collectCentroidsInTriangle(triangle, left, top, right, (top <span style="color:#f92672">+</span> bottom) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>);
@@ -329,7 +329,7 @@ Polygon calculateIntersectGeneratedPolygon(<span style="color:#66d9ef">const</sp
 <h2 id="centroids-become-sample-points-in-3d-space">Centroids become sample points in 3D space</h2>
 <p>We&rsquo;ve been watching how to find centroids in 2D space. And now it&rsquo;s time to convert these in 3D space to use them as an actual sample point.</p>
 <p>And fortunately, there was a good tool to convert my centroids. it&rsquo;s called <a href="https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates">Barycentric coordinates</a>.<br>
-According to the article(in the link above), it&rsquo;s possible to convert each centroid by down below:</p>
+According to the article in the link above, it&rsquo;s possible to convert each centroid by down below:</p>
 <blockquote>
 <ol>
 <li>Here you have a triangle \(\triangle ABC\).</li>
@@ -343,17 +343,17 @@ According to the article(in the link above), it&rsquo;s possible to convert each
 Therefore, It is possible to find \(x\), \(y\) and \(z\) for each centroid.<br>
 Also, you don&rsquo;t have to calculate every \(x\), \(y\) and \(z\) by calculating each area, but two of them. Since \(x + y + z = 1\).</p>
 <p>And second, you would remember \(A\), \(B\) and \(C\) each point of the triangle are actually vertices of geometry in 3D space. And here just used its UV component of each vertex.<br>
-So pretend \(A^\prime\), \(B^\prime\) and \(C^\prime\) are the position(in 3D space) component of each vertex.</p>
+So pretend \(A^\prime\), \(B^\prime\) and \(C^\prime\) are the position component in 3D space of each vertex.</p>
 <p>Then finally, each centroid in 3D coordinate \(P^\prime\) is: \(P^\prime = xA^\prime + yB^\prime + zC^\prime\).<br>
-Also, you can apply it in every component of the vertex. Such as the normal direction. But in this case, make sure to normalize after calculating \(P^\prime\).</p>
+Also, you can apply it in every component of the vertex. Such as normal direction. But in this case, make sure to normalize after calculating \(P^\prime\).</p>
 <br/><br/>
 <h2 id="one-pixel-multiple-sample-points">One pixel, multiple sample points</h2>
 <p>I briefly mentioned on the pseudo-code above that &lsquo;multiple triangles can exist in the same object&rsquo;.</p>
 <p>And let&rsquo;s think about what will be happened if one more triangle is located in the same space.<br>
-Probably, with a high chance, many pixels will contain one more centroid. And one of the common cases you can see it happens is a &lsquo;rectangle&rsquo;.</p>
-<p>As you know, every single primitive are expressed by a sequence of triangles. Hence, the rectangle is not an exemption. More exactly, the rectangle is made up of two triangles.</p>
-<p>Then where will it be? Which spot have multiple centroids in the rectangle? You would intuitively notice, it&rsquo;s a diagonal side of the rectangle.<br>
-The diagonal side of the rectangle, in other words, is a spot that one edge on each side of two triangles is ovelapped.<br>
+Probably, with a high chance, many pixels will contain one more centroid. And one of the common cases you can see it happens is &lsquo;rectangle&rsquo;.</p>
+<p>As you know, every single primitive are expressed by sequence of triangles. Hence, rectangle is not an exemption. More exactly, rectangle is made up of two triangles.</p>
+<p>Then where will it be? Which spot have multiple centroids in rectangle? You would intuitively notice, it&rsquo;s diagonal side of rectangle.<br>
+The diagonal side of rectangle, in other words, is a spot that one edge on each side of two triangles is overlapped.<br>
 And the edge also crosses the pixels. See <em>Figure 03</em>.</p>
 <p>
 
@@ -368,7 +368,7 @@ And the edge also crosses the pixels. See <em>Figure 03</em>.</p>
 
 
 <div style="text-align: center; font-style: italic;">
-Figure 03: The rectangle on a UV(2D) space. Pixels are each grid. And the orange and red points are the centroids generated by intersecting the rectangle and pixels. You can observe two centroids on each spot where the diagonal side of each triangle crosses pixels.
+Figure 03: The rectangle on UV(2D) space. Pixels are each grid. And the orange and red points are centroids generated by intersecting the rectangle and pixels. You can observe two centroids on each spot where the diagonal side of each triangle crosses pixels.
 </div>
 <br/><br/></p>
 <p>We just saw the case two centroids are placed in one pixel. But then again, there are so many possibilities that more than two centroids placing in one pixel. Depending on how the triangles allocated.</p>
@@ -376,7 +376,7 @@ Figure 03: The rectangle on a UV(2D) space. Pixels are each grid. And the orange
 <h2 id="one-pixel-multiple-sample-points-whats-the-matter">One pixel, multiple sample points: What&rsquo;s the matter?</h2>
 <p>Then, I asked myself what is the actual problem if each irradiance is stored in the same pixel. To solve this problem, I needed to remember how I use lightmap.
 The final result of lightmap that I&rsquo;m gonna make will be used as texture when primitives in a scene are rendered.<br>
-So if multiple irradiances are stored in a pixel, it will cause an unexpected(or weird looking) result when a shader samples the position of the pixel while rendering primitives.</p>
+So if multiple irradiances are stored in one pixel, it will cause an unexpected(or weird looking) result when shader samples the position of the pixel while rendering primitives.</p>
 <p>
 
 
@@ -390,16 +390,16 @@ So if multiple irradiances are stored in a pixel, it will cause an unexpected(or
 
 
 <div style="text-align: center; font-style: italic;">
-Figure 04: A lightmap UV of an object in the scene. You can see there is no overlapping or duplication between triangles.
+Figure 04: A lightmap UV of an object in a scene. You can see there is no overlapping or duplication between triangles.
 </div></p>
 <p>But there was one more thing I had to remember. I said it will cause an unexpected result. But somehow it will be pretty expected. What I meant is, every triangle in the UV space, I pretended <strong>they&rsquo;re not overlapped each other</strong>. See <em>Figure 04</em>.<br>
-And that means, for the sample points that each of their irradiances are needed to be stored in the same place, they will be quite close together in 3D space. So I instantly thought if I calculate an average position for the overlapped sample points, then compare with the result between original and this one.</p>
+And that means, for sample points that each of their irradiances are needed to be stored in a same place, they will be quite close together in 3D space. So I instantly thought if I calculate average position for overlapped sample points, then compare with the result between original and this one.</p>
 <p>And this is how I calculate irradiance in both original and average position.</p>
 <p>The original:</p>
 <blockquote>
 <ol>
-<li>Calculate irradiance on each sample point.</li>
-<li>Calculate the area of each polygon whose centroid in 3D space is each sample point.</li>
+<li>Calculate irradiance of each sample point.</li>
+<li>Calculate area of each polygon whose centroid in 3D space is each sample point.</li>
 <li>Sum all the area in the current pixel. And divide each area by this summation(I&rsquo;m gonna call it &lsquo;Participation rate&rsquo;).</li>
 <li>Multiply each irradiance by each &lsquo;Participation rate&rsquo;. Then sum them together.</li>
 <li>This summation is the irradiance of the current pixel. (Weighted averaged irradiance)</li>
@@ -408,16 +408,16 @@ And that means, for the sample points that each of their irradiances are needed 
 <p>The average position:</p>
 <blockquote>
 <ol>
-<li>Calculate the area of each polygon whose centroid in 3D space is each sample point.</li>
-<li>Add all the area in the current pixel. And divide each area by this summation(This is &lsquo;Participation rate&rsquo; which is the same thing above).</li>
+<li>Calculate area of each polygon whose centroid in 3D space is each sample point.</li>
+<li>Add all the area in the current pixel. And divide each area by this summation(This is &lsquo;Participation rate&rsquo; which is the same one above).</li>
 <li>Multiply position and normal of each sample point by each &lsquo;Participation rate&rsquo;. Then sum each position and normal separately.
 Also, don&rsquo;t forget to normalize the &lsquo;summation of normals&rsquo;.</li>
-<li>Shoot a ray &lsquo;summation of normals&rsquo; direction at the &lsquo;summation of positions&rsquo;. And test if there are any intersections between the polygons which are belonging with current pixel.</li>
-<li>Find the farthest intersection. That is a new sample point position of the current pixel.</li>
-<li>If there is nothing intersected, Shoot a ray negative &lsquo;summation of normals&rsquo; direction at the same point. And samely, test if there are any intersections between the polygons which are belonging with current pixel.</li>
-<li>Find the nearest intersection. That is the new sample point position of the current pixel.</li>
-<li>If nothing intersected still, &lsquo;summation of positions&rsquo; is the new sample point position of the current pixel.</li>
-<li>Calculate irradiance with &lsquo;summation of normals&rsquo; at the new sample point position.</li>
+<li>Shoot ray at the &lsquo;summation of positions&rsquo; along &lsquo;summation of normals&rsquo; direction. And test if there are any intersections between polygons which are belonging with current pixel.</li>
+<li>Find farthest intersection. That is new sample point position of current pixel.</li>
+<li>If nothing intersected, Shoot ray at the same point along negative &lsquo;summation of normals&rsquo; direction. And samely, test if there are any intersections between polygons which are belonging with current pixel.</li>
+<li>Find nearest intersection. That is new sample point position of current pixel.</li>
+<li>If nothing intersected still, &lsquo;summation of positions&rsquo; is the new sample point position of current pixel.</li>
+<li>Calculate irradiance with &lsquo;summation of normals&rsquo; at new sample point position.</li>
 </ol>
 </blockquote>
 <p>And thankfully there was not much difference between them.</p>
