@@ -405,6 +405,22 @@ And that means, for sample points that each of their irradiances are needed to b
 <li>This summation is the irradiance of the current pixel. (Weighted averaged irradiance)</li>
 </ol>
 </blockquote>
+<p>
+
+
+<div class="center">
+  <img
+    src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure05.gif"
+    alt="Figure05"
+    decoding="async"
+  />
+</div>
+
+
+<div style="text-align: center; font-style: italic;">
+Figure 05: 3 triangles are located in one pixel(see left image). Magenta arrows are normal directions of each sample point. Each colour of triangle is the irradiance of each sample point. The final colour is weighed average of each irradiance.
+</div>
+<br/><br/></p>
 <p>The average position:</p>
 <blockquote>
 <ol>
@@ -420,6 +436,22 @@ Also, don&rsquo;t forget to normalize the &lsquo;summation of normals&rsquo;.</l
 <li>Calculate irradiance with &lsquo;summation of normals&rsquo; at new sample point position.</li>
 </ol>
 </blockquote>
+<p>
+
+
+<div class="center">
+  <img
+    src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure06.gif"
+    alt="Figure06"
+    decoding="async"
+  />
+</div>
+
+
+<div style="text-align: center; font-style: italic;">
+Figure 06: Magenta arrows are normal directions of each sample point. Red arrow is weighted average of each normal direction. The final colour is an irradiance of averaged normal direction.
+</div>
+<br/><br/></p>
 <p>And thankfully there was not much difference between them.</p>
 <br/><br/>
 <h2 id="references">References</h2>
