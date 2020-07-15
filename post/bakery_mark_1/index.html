@@ -333,7 +333,7 @@ According to the article in the link above, it&rsquo;s possible to convert each 
 <blockquote>
 <ol>
 <li>Here you have a triangle \(\triangle ABC\).</li>
-<li>And there&rsquo;s a point \(P\) which located inside the \(\triangle ABC\).</li>
+<li>And there&rsquo;s a point \(P\) which placed inside the \(\triangle ABC\).</li>
 <li>Then if you connect all the points \(A\), \(B\), \(C\) and \(P\), you will get 3 sub-triangles \(\triangle ABP\), \(\triangle ACP\) and \(\triangle BCP\).</li>
 <li>And let&rsquo;s say, \(x = \frac{\triangle BCP _\rm{Area}}{\triangle ABC _\rm{Area}}\), \(y = \frac{\triangle ACP _\rm{Area}}{\triangle ABC _\rm{Area}}\) and \(z = \frac{\triangle ABP _\rm{Area}}{\triangle ABC _\rm{Area}}\). Then you can see \(x + y + z = 1\).</li>
 <li>Finally, you can calculate \(P\) by the following: \(P = xA + yB + zC\).</li>
@@ -349,7 +349,7 @@ Also, you can apply it in every component of the vertex. Such as normal directio
 <br/><br/>
 <h2 id="one-pixel-multiple-sample-points">One pixel, multiple sample points</h2>
 <p>I briefly mentioned on the pseudo-code above that &lsquo;multiple triangles can exist in the same object&rsquo;.</p>
-<p>And let&rsquo;s think about what will be happened if one more triangle is located in the same space.<br>
+<p>And let&rsquo;s think about what will be happened if one more triangle is placed in the same space.<br>
 Probably, with a high chance, many pixels will contain one more centroid. And one of the common cases you can see it happens is &lsquo;rectangle&rsquo;.</p>
 <p>As you know, every single primitive are expressed by sequence of triangles. Hence, rectangle is not an exemption. More exactly, rectangle is made up of two triangles.</p>
 <p>Then where will it be? Which spot have multiple centroids in rectangle? You would intuitively notice, it&rsquo;s diagonal side of rectangle.<br>
@@ -418,7 +418,7 @@ And that means, for sample points that each of their irradiances are needed to b
 
 
 <div style="text-align: center; font-style: italic;">
-Figure 05: 3 triangles are located in one pixel(see left image). Magenta arrows are normal directions of each sample point. Each colour of triangle is the irradiance of each sample point. The final colour is weighed average of each irradiance.
+Figure 05: 3 triangles are placed in one pixel(see left illustration). Magenta arrows are normal directions of each sample point. Each colour of triangle is the irradiance of each sample point. The final colour is weighed average of each irradiance.
 </div>
 <br/><br/></p>
 <p>The average position:</p>
@@ -450,6 +450,21 @@ Also, don&rsquo;t forget to normalize the &lsquo;summation of normals&rsquo;.</l
 
 <div style="text-align: center; font-style: italic;">
 Figure 06: Magenta arrows are normal directions of each sample point. Red arrow is weighted average of each normal direction. The final colour is an irradiance of averaged normal direction.
+</div>
+
+
+
+<div class="center">
+  <img
+    src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure06_1.gif"
+    alt="Figure06-1"
+    decoding="async"
+  />
+</div>
+
+
+<div style="text-align: center; font-style: italic;">
+Figure 06-1: Averaged position will not always be placed on a surface of object. So it needs to be moved along averaged normal direction until the position contact to the object.
 </div>
 <br/><br/></p>
 <p>And thankfully there was not much difference between them.</p>
