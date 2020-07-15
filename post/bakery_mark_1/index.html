@@ -464,10 +464,14 @@ Figure 06: Magenta arrows are normal directions of each sample point. Red arrow 
 
 
 <div style="text-align: center; font-style: italic;">
-Figure 06-1: Averaged position will not always be placed on a surface of object. So it needs to be moved along averaged normal direction until the position contact to the object.
+Figure 06-1: Averaged position will not always be placed on a surface of the object. So it needs to be moved along averaged normal direction until the position contact to the object.
 </div>
 <br/><br/></p>
-<p>And thankfully there was not much difference between them.</p>
+<p>And thankfully there was not much difference between two. Except when the segment size goes too small. In the worst case, every triangle in the object will be placed in the same pixel. And this may cause the obvious difference between two. But we have to notice that both original and averaged methods won&rsquo;t show up correct result in that case.</p>
+<br/><br/>
+<h2 id="direct-light-computation">Direct light computation</h2>
+<p>Now it&rsquo;s time to jump into the actual calculation of lightmap.<br>
+And this will be the first <strong>visibly observable</strong> work of the whole process.</p>
 <br/><br/>
 <h2 id="references">References</h2>
 <ul>
