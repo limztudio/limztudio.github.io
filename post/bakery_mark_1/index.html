@@ -470,7 +470,7 @@ And this will be the first <strong>visibly observable</strong> work of the whole
 Because I did it with the traditional diffuse lighting. Which is usually called by <strong>Lambertian Shading</strong>. As you know, it&rsquo;s just done by calculating \(\cos\theta\) between surface normal direction \(N\) and negated incident light direction \(L\).<br>
 Also, I added here a tiny process to calculate occlusion between light and surface. So this will make a shadow by other object or by even itself.</p>
 <p>And this is a simple pseudo-code of direct light calculation.<br>
-Code will check the occlusion between each light and each sample point. Then if something occluded, make current colour of sample point to zero. Or else, calculate diffuse colour using Lambertian shading depends on its light type(e.g. Directional light, Point light).</p>
+Code will check the occlusion between each light and each sample point. Then if something occluded, make current colour of sample point to zero. Or else, calculate diffuse colour using Lambertian shading depends on its light type(<em>e.g., Directional light or Point light</em>).</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> iSample : samplePoints){
     <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> iLight : lights){
         Ray rayBetween <span style="color:#f92672">=</span> calculateRay(iLight, iSample);
