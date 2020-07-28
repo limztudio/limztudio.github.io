@@ -201,7 +201,7 @@ Figure 02: A flow of finding centroids. The yellow squares are current searching
 On the article, they mentioned that if subject polygon is concave, the output &lsquo;generated polygon&rsquo; may have extraneous lines. Since it has only one vertex list output. So somehow this may cause a problem to find out centroid depending on an algorithm.<br>
 But luckily, subject polygon here always be a triangle, so it will never be concaved.</p>
 <p>And here is C++ like pseudo-code of my idea. I used <a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a>. Which allowed me easily parallelize my code. Because it has its own task scheduler.<br>
-If you&rsquo;re working with <strong>MVSC</strong>, you can use <strong>PPL</strong>(since <strong>MVSC 2010</strong>) instead of <strong>TBB</strong> library. Seems mostly it&rsquo;s possible to switch between them. Though it looks like <strong>TBB</strong> has more extra features than <strong>PPL</strong>.</p>
+If you&rsquo;re working with <strong>MVSC</strong>, you don&rsquo;t necessarily have to integrate <strong>TBB</strong>. As an alternate, you can use a built-in library called <strong>PPL</strong>(since <strong>MVSC 2010</strong>) which has almost the same interface with <strong>TBB</strong>.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;tbb/task_group.h&#34;</span><span style="color:#75715e">
 </span><span style="color:#75715e"></span>
 ...
@@ -486,7 +486,7 @@ Code will check the occlusion between each light and each sample point. Then if 
         iSample.color <span style="color:#f92672">=</span> bOccluded <span style="color:#f92672">?</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">:</span> iLight.calculateColorOf(iSample);
     }
 }
-</code></pre></div><br/><br/>
+</code></pre></div><p>And <em>Figure 07</em> is a result of the code. I placed a box on the ground. Only one directional light setup in the scene. In order to observe the clear result, I didn&rsquo;t use texture filter to render the lightmap.</p>
 <p>
 
 
@@ -500,8 +500,9 @@ Code will check the occlusion between each light and each sample point. Then if 
 
 
 <div style="text-align: center; font-style: italic;">
-Figure 07: blabla.
-</div></p>
+Figure 07: A box on the ground. The black area is the shaded region by directional light.
+</div>
+<br/><br/></p>
 <br/><br/>
 <h2 id="references">References</h2>
 <ul>
