@@ -201,7 +201,7 @@ Figure 02: A flow of finding centroids. The yellow squares are current searching
 On the article, they mentioned that if subject polygon is concave, the output &lsquo;generated polygon&rsquo; may have extraneous lines. Since it has only one vertex list output. So somehow this may cause a problem to find out centroid depending on an algorithm.<br>
 But luckily, subject polygon here always be a triangle, so it will never be concaved.</p>
 <p>And here is C++ like pseudo-code of my idea. I used <a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a>. Which allowed me easily parallelize my code. Because it has its own task scheduler.<br>
-If you&rsquo;re working with <strong>MVSC</strong>, you don&rsquo;t necessarily have to integrate <strong>TBB</strong>. As an alternate, you can use a built-in library called <strong>PPL</strong>(since <strong>MVSC 2010</strong>) which has almost the same interface with <strong>TBB</strong>.</p>
+If you&rsquo;re working with <strong>MVSC</strong>, you don&rsquo;t necessarily have to integrate <strong>TBB</strong>. As an alternate, you can use a built-in library called <a href="https://docs.microsoft.com/cpp/parallel/concrt/parallel-patterns-library-ppl">PPL</a>(since <strong>MVSC 2010</strong>) which has almost the same interface with <strong>TBB</strong>.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;tbb/task_group.h&#34;</span><span style="color:#75715e">
 </span><span style="color:#75715e"></span>
 ...
