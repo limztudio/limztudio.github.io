@@ -503,6 +503,25 @@ Code will check the occlusion between each light and each sample point. Then if 
 Figure 07: A box on the ground. The black area is the shaded region by directional light.
 </div>
 <br/><br/></p>
+<p>So the direct light calculation is easily done. But as you notice, there is an obvious aliasing. Of course in actual practice, I used the bilinear filter to render the lightmap. But still, it was hard to hide ziggy-zaggy pattern.<br>
+See how it looks different compare to non filtered one.</p>
+<p>
+
+
+<div class="center">
+  <img
+    src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure08.gif"
+    alt="Figure08"
+    decoding="async"
+  />
+</div>
+
+
+<div style="text-align: center; font-style: italic;">
+Figure 08: Comparison of non filtered and bilinear filtered rendering. Right one is the bilinear filtered.
+</div>
+<br/><br/></p>
+<p>The simplest way to reduce the aliasing is increasing lightmap size. Yet, it will take too much time to calculate.</p>
 <br/><br/>
 <h2 id="references">References</h2>
 <ul>
