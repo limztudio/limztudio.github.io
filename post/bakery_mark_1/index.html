@@ -521,7 +521,43 @@ See how it looks different compare to non filtered one.</p>
 Figure 08: Comparison of non filtered and bilinear filtered rendering. Right one is the bilinear filtered.
 </div>
 <br/><br/></p>
-<p>The simplest way to reduce the aliasing is increasing lightmap size. Yet, it will take too much time to calculate.</p>
+<p>As you can see, there is the aliasing remains.<br>
+And I thought the simplest way to reduce the aliasing is increasing lightmap size. Yet, it will take too much time to calculate.
+So, for the halfway solution, I divided each sample into small pieces but only for the direct light calculation. Hence, the indirect light calculation will not be affected.</p>
+<p>And I made a simple logic to divide them. Which is: <em>you would remember in the early stage, I converted each centroid to 3D space and that is the sample point. And for each centroid, they have their own <em><strong>polygon</strong></em>(if you don&rsquo;t remember, <a href="#find-sample-points">check here</a>). So, what I did is <em><strong>connect centroid with every vertex of the polygon</strong></em> and also for each vertex, <em><strong>connect every neighbour vertices with them</strong></em>. Then you will find <em><strong>sub-triangles in the polygon</strong></em>. Now, find all <em><strong>centroids of each sub-triangle</strong></em>, then convert them to the 3D space. That will be the sub-divided sample point for the direct light calculation.</em></p>
+<p>And the result of this is <em>Figure 09</em>.</p>
+<p>
+
+
+<div class="center">
+  <img
+    src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure09.gif"
+    alt="Figure09"
+    decoding="async"
+  />
+</div>
+
+
+<div style="text-align: center; font-style: italic;">
+Figure 09: Image on the left is the result that calculates direct light on each sample point. The other one is the same but calculated on each subdivided sample point.
+</div>
+<br/><br/></p>
+<p>
+
+
+<div class="center">
+  <img
+    src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure09_1.gif"
+    alt="Figure09-1"
+    decoding="async"
+  />
+</div>
+
+
+<div style="text-align: center; font-style: italic;">
+Figure 09-1: Same as Figure09, but the bilinear filter applied.
+</div>
+<br/><br/></p>
 <br/><br/>
 <h2 id="references">References</h2>
 <ul>
