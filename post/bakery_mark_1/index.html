@@ -524,7 +524,8 @@ Figure 08: Comparison of non filtered and bilinear filtered rendering. Right one
 <p>As you can see, there is the aliasing remains.<br>
 And I thought the simplest way to reduce the aliasing is increasing lightmap size. Yet, it will take too much time to calculate.
 So, for the halfway solution, I divided each sample into small pieces but only for the direct light calculation. Hence, the indirect light calculation will not be affected.</p>
-<p>And I made a simple logic to divide them. Which is: <em>you would remember in the early stage, I converted each centroid to 3D space and that is the sample point. And for each centroid, they have their own <em><strong>polygon</strong></em>(if you don&rsquo;t remember, <a href="#find-sample-points">check here</a>). So, what I did is <em><strong>connect centroid with every vertex of the polygon</strong></em> and also for each vertex, <em><strong>connect every neighbour vertices with them</strong></em>. Then you will find <em><strong>sub-triangles in the polygon</strong></em>. Now, find all <em><strong>centroids of each sub-triangle</strong></em>, then convert them to the 3D space. That will be the sub-divided sample point for the direct light calculation.</em></p>
+<p>And I made a simple logic to divide them. Which is: <em>you would remember in the early stage, I converted each centroid to 3D space and that is the sample point. And for each centroid, they have their own polygon(if you don&rsquo;t remember, <a href="#find-sample-points">check here</a>). So, what I did is connect centroid with every vertex of the polygon and for each vertex, connect to their neighbour vertices. Then you will find <em><strong>sub-triangles in the polygon</strong></em>. Now, find all <em><strong>centroids of each sub-triangle</strong></em>, then convert them to the 3D space. That will be the sub-divided sample point for the direct light calculation.</em></p>
+<p>Since each sub-divided sample point are placed in the same pixel, don&rsquo;t forget to divide by their area size of sub-divided polygon.</p>
 <p>And the result of this is <em>Figure 09</em>.</p>
 <p>
 
@@ -542,6 +543,7 @@ So, for the halfway solution, I divided each sample into small pieces but only f
 Figure 09: Image on the left is the result that calculates direct light on each sample point. The other one is the same but calculated on each subdivided sample point.
 </div>
 <br/><br/></p>
+<p>The edge part of the shaded region(especially diagonal edge in the lightmap), they look like multisampled. And let&rsquo;s see what if the bilinear filter applied.</p>
 <p>
 
 
@@ -558,6 +560,12 @@ Figure 09: Image on the left is the result that calculates direct light on each 
 Figure 09-1: Same as Figure09, but the bilinear filter applied.
 </div>
 <br/><br/></p>
+<p>write about this tomorrow:<br>
+to make it quicker:<br>
+compute direct light on each sample point(not the sub-divided one)<br>
+calculate derivative of each pixel on the light map<br>
+if the derivative has bigger value than big-enough number(threshold), sub-divide polygon of the pixel and recalculate direct light<br>
+I didn&rsquo;t tried this, but might be effective</p>
 <br/><br/>
 <h2 id="references">References</h2>
 <ul>
