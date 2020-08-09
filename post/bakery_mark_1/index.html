@@ -180,7 +180,7 @@ And if the box has larger height than width, chop it in horizontal direction. Or
 </li>
 </ol>
 </blockquote>
-<p>And here&rsquo;s <em>Figure 02</em>. As I mentioned, when boxes chopped in half, chopped two boxes need to perform the above procedure individually. But I depicted only one of the box here for explanation. 
+<p>And here&rsquo;s <em>Figure 02</em>. As I mentioned, when boxes chopped in half, chopped two boxes need to perform above procedure individually. But I depicted only one of the box here for explanation. 
 
 
 
@@ -367,7 +367,7 @@ Figure 03: The rectangle on UV(2D) space. Pixels are each grid. And the orange a
 <br/><br/></p>
 <p>We just saw the case two centroids are placed in one pixel. But then again, there are so many possibilities that more than two centroids placing in one pixel. Depending on how the triangles allocated.</p>
 <br/><br/>
-<h2 id="one-pixel-multiple-sample-points-whats-the-matter">One pixel, multiple sample points: What&rsquo;s the matter?</h2>
+<h3 id="one-pixel-multiple-sample-points-whats-the-matter">One pixel, multiple sample points: What&rsquo;s the matter?</h3>
 <p>Then, I asked myself what is the actual problem if each irradiance is stored in the same pixel. To solve this problem, I needed to remember how I use lightmap.
 The final result of lightmap that I&rsquo;m gonna make will be used as texture when primitives in a scene are rendered.<br>
 So if multiple irradiances are stored in one pixel, it will cause an unexpected(or weird looking) result when shader samples the position of the pixel while rendering primitives.</p>
@@ -543,7 +543,7 @@ So, for the halfway solution, I divided each sample into small pieces but only f
 Figure 09: Image on the left is the result that calculates direct light on each sample point. The other one is the same but calculated on each subdivided sample point.
 </div>
 <br/><br/></p>
-<p>The edge part of the shaded region(especially diagonal edge in the lightmap), they look like multisampled. And let&rsquo;s see what if the bilinear filter applied.</p>
+<p>The edge part of the shaded region(especially diagonal side in the lightmap), they look like multi-sampled. And let&rsquo;s see what if the bilinear filter applied.</p>
 <p>
 
 
@@ -560,6 +560,11 @@ Figure 09: Image on the left is the result that calculates direct light on each 
 Figure 09-1: Same as Figure09, but the bilinear filter applied.
 </div>
 <br/><br/></p>
+<p>Now we see the aliasing is a bit relieved.</p>
+<br/><br/>
+<h3 id="direct-light-computation-a-small-tweak-for-speed-up">Direct light computation: A small tweak for speed up</h3>
+<p>While I writing this article, I randomly got an idea to improve the calculating speed of direct light computation. But it is just an idea, not implemented. So I have to apply it to my future work.</p>
+<p>Anyway, What I think is that most pixels of the shaded region have the same value, except when they placed nearby of the unshaded region. Therefore, if a pixel has the same(or similar even) result as its nearby pixels, it doesn’t necessarily have to be sub-divided.</p>
 <p>write about this tomorrow:<br>
 to make it quicker:<br>
 compute direct light on each sample point(not the sub-divided one)<br>
