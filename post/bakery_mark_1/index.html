@@ -578,6 +578,21 @@ Figure 09-1: Same as Figure09, but the bilinear filter applied.
 <p>But I&rsquo;m not sure will it be effective if direct light calculation contains point light, spot light or if it allows transparent/translucent material or caustic effect. If so, each sample point will have more chance to have different value with others even if they&rsquo;re in the shaded region.</p>
 <br/><br/>
 <h2 id="the-radiosity">The radiosity</h2>
+<p>Now it&rsquo;s the time to look up how to calculate indirect light. And like I mentioned in the early stages, I used radiosity method to calculate them. The reason why I choose it is, well, this was the only keyword I could search for.</p>
+<p>According to <a href="http://public.beuth-hochschule.de/~godberse/wiese/cga1/08_3Dglobal/sw/radiosity/radiosity_all.htm">this slide</a>(see slide 5 in the page), the radiosity method has its basis in the theory of <strong>thermal radiation</strong>. So the theory is applied here to describe light energy.</p>
+<p>Anyway, the important part is its equation. And for the finite number of surface, the equation is:</p>
+<blockquote>
+<p>\(B _\rm{i} = E _\rm{i} + ρ _\rm{i} \sum _{j=1}^n {F _\rm{ij} \cdot B _\rm{j}}\ \)</p>
+</blockquote>
+<p>where:<br>
+\(B _\rm{i} =\) radiosity of surface \(i\)<br>
+\(E _\rm{i} =\) emissivity of surface \(i\)<br>
+\(ρ _\rm{i} =\) reflectivity of surface \(i\)<br>
+\(B _\rm{j} =\) radiosity of surface \(j\)<br>
+\(F _\rm{ij} =\) form factor of surface \(j\) relative to surface \(i\)</p>
+<p>As you see, the equation is recursive. Because the \(B _\rm{j}\) on the right side is the previous result of \(B _\rm{i}\).<br>
+Also, the \(B _\rm{i}\) would be the irradiance we&rsquo;ve been looking for.<br>
+And the case of \(E _\rm{i}\) and \(ρ _\rm{i}\), I could leave these as a constant value. Or sort of configurable value depends on the surface material.</p>
 <br/><br/>
 <h2 id="references">References</h2>
 <ul>
