@@ -579,10 +579,10 @@ Figure 09-1: Same as Figure09, but the bilinear filter applied.
 <br/><br/>
 <h2 id="the-radiosity">The radiosity</h2>
 <p>Now it&rsquo;s the time to look up how to calculate indirect light. And like I mentioned in the early stages, I used radiosity method to calculate them. The reason why I choose it is, well, this was the only keyword I could search for.</p>
-<p>According to <a href="http://public.beuth-hochschule.de/~godberse/wiese/cga1/08_3Dglobal/sw/radiosity/radiosity_all.htm">this slide</a>(see slide 5 in the page), the radiosity method has its basis in the theory of <strong>thermal radiation</strong>. So the theory is applied here to describe light energy.</p>
-<p>Anyway, the important part is its equation. And for the finite number of surface, the equation is:</p>
+<p>According to <a href="http://public.beuth-hochschule.de/~godberse/wiese/cga1/08_3Dglobal/sw/radiosity/radiosity_all.htm">this slide</a>(see slide 5 in the page), the radiosity method has its basis in the theory of <strong>thermal radiation</strong>. So the theory applied here to describe light energy.</p>
+<p>Anyway, the important part is its equation. And for the finite number \(n\) of surface, the equation is:</p>
 <blockquote>
-<p>\(B _\rm{i} =\) \(E _\rm{i} + ρ _\rm{i} \sum _{j=1}^n\) \(F _\rm{ij}\) \(\cdot\) \(B _\rm{j}\)</p>
+<p>\(B _\rm{i} =\) \(E _\rm{i} + ρ _\rm{i} \sum _{j=1}^n\) \(B _\rm{j}\) \(\cdot\) \(F _\rm{ij}\)</p>
 </blockquote>
 <p>where:<br>
 \(B _\rm{i} =\) radiosity of surface \(i\)<br>
@@ -593,6 +593,7 @@ Figure 09-1: Same as Figure09, but the bilinear filter applied.
 <p>As you see, the equation is recursive. Because the \(B _\rm{j}\) on the right side is the previous result of \(B _\rm{i}\).<br>
 Also, the \(B _\rm{i}\) would be the irradiance we&rsquo;ve been looking for.<br>
 And the case of \(E _\rm{i}\) and \(ρ _\rm{i}\), I could leave these as a constant value or sort of configurable one that depends on its surface material.</p>
+<p>\(F _\rm{ij} =\) \(\frac{1}{A _\rm{i}}\) \(\cdot\) \(\int _{A _\rm{i}} \int _{A _\rm{j}}\) \(\frac{\cos\theta _\rm{i} \cdot \cos\theta _\rm{j}}{\pi r^2}\) \(dA _\rm{i}\) \(dA _\rm{j}\)</p>
 <br/><br/>
 <h2 id="references">References</h2>
 <ul>
