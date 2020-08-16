@@ -579,7 +579,7 @@ Figure 09-1: Same as Figure09, but the bilinear filter applied.
 <br/><br/>
 <h2 id="the-radiosity">The radiosity</h2>
 <p>Now it&rsquo;s the time to look up how to calculate indirect light. And like I mentioned in the early stages, I used radiosity method to calculate them. The reason why I choose it is, well, this was the only keyword I could search for.</p>
-<p>According to <a href="http://public.beuth-hochschule.de/~godberse/wiese/cga1/08_3Dglobal/sw/radiosity/radiosity_all.htm">this slide</a>(see slide 5 in the page), the radiosity method has its basis in the theory of <strong>thermal radiation</strong>. So the theory applied here to describe light energy.</p>
+<p>According to <a href="http://public.beuth-hochschule.de/~godberse/wiese/cga1/08_3Dglobal/sw/radiosity/radiosity_all.htm">the slide, Radiosity OverView</a>(see slide 5 in the page), the radiosity method has its basis in the theory of <strong>thermal radiation</strong>. So the theory applied here to describe light energy.</p>
 <p>Anyway, the important part is its equation. And for the finite number \(n\) of surface, the equation is:</p>
 <blockquote>
 <p>\(B _\rm{i} = \textit{E} _\rm{i} + ρ _\rm{i} \sum _{j=1}^n {\textit{B} _\rm{j} \cdot \textit{F} _\rm{ij}}\)</p>
@@ -592,8 +592,17 @@ Figure 09-1: Same as Figure09, but the bilinear filter applied.
 \(F _\rm{ij} =\) form factor of surface \(j\) relative to surface \(i\)</p>
 <p>As you see, the equation is recursive. Because the \(B _\rm{j}\) on the right side is the previous result of \(B _\rm{i}\).<br>
 Also, the \(B _\rm{i}\) would be the irradiance we&rsquo;ve been looking for.<br>
-And the case of \(E _\rm{i}\) and \(ρ _\rm{i}\), I could leave these as a constant value or sort of configurable one that depends on its surface material.</p>
-<p>\(F _\rm{ij} = \frac{1}{\textit{A} _\rm{i}} \cdot \int _{\textit{A} _\rm{i}} {\int _{\textit{A} _\rm{j}} {\frac{\cos\theta _\rm{i} \cdot \cos\theta _\rm{j}}{\pi r^2} \textit{dA} _\rm{i} \textit{dA} _\rm{j}}}\)</p>
+The case of \(E _\rm{i}\) and \(ρ _\rm{i}\), I could leave these as a constant value or sort of configurable one that depends on its surface material.<br>
+And there&rsquo;s one ne left which called <strong>form factor</strong>, \(F _\rm{ij}\). This stands for a relation between leaves and arrives energy. And the following equation shows how the form factor should be calculated.</p>
+<blockquote>
+<p>\(F _\rm{ij} = \frac{1}{\textit{A} _\rm{i}} \cdot \int _{\textit{A} _\rm{i}} {\int _{\textit{A} _\rm{j}} {\frac{\cos\theta _\rm{i} \cdot \cos\theta _\rm{j}}{\pi r^2} \textit{dA} _\rm{i} \textit{dA} _\rm{j}}}\)<br>
+<em>(It will be better to see slide 7 of <a href="http://public.beuth-hochschule.de/~godberse/wiese/cga1/08_3Dglobal/sw/radiosity/radiosity_all.htm">this page</a>)</em></p>
+</blockquote>
+<p>Each letter is:<br>
+\(A _\rm{i}\) and \(A _\rm{j}\) are areas of surface \(i\) and surface \(j\).<br>
+\(\theta _\rm{i}\) is the angle between surface \(i\) normal and a direction towards surface \(i\) to surface \(j\).<br>
+\(\theta _\rm{j}\) is the angle between surface \(j\) normal and a direction towards surface \(j\) to surface \(i\).<br>
+The \(r\) is the distance between surface \(j\) and surface \(i\).</p>
 <br/><br/>
 <h2 id="references">References</h2>
 <ul>
