@@ -472,7 +472,7 @@ Also, I added here a tiny process to calculate occlusion between light and surfa
 <p>And this is a simple pseudo-code of direct light calculation.<br>
 Code will check the occlusion between each light and each sample point. Then if something occluded, make current colour of sample point to zero. Or else, calculate diffuse colour using Lambertian shading depends on its light type(<em>e.g., Directional light or Point light</em>).</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> sample : samplePoints){
-    sample.color <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+    sample.totalLight <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
 
     <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> light : lights){
         Ray rayBetween <span style="color:#f92672">=</span> calculateRay(light, sample);
@@ -485,7 +485,7 @@ Code will check the occlusion between each light and each sample point. Then if 
             }
         }
 
-        sample.color <span style="color:#f92672">+=</span> bOccluded <span style="color:#f92672">?</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">:</span> light.calculateColorOf(sample);
+        sample.totalLight <span style="color:#f92672">+=</span> bOccluded <span style="color:#f92672">?</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">:</span> light.calculateColorOf(sample);
     }
 }
 </code></pre></div><p>And <em>Figure 07</em> is a result of the code. I placed a box on the ground. Only one directional light setup in the scene. In order to observe the clear result, I didn&rsquo;t use texture filter to render the lightmap.</p>
@@ -579,10 +579,10 @@ Figure 09-1: Same as Figure09, but the bilinear filter applied.
 <br/><br/>
 <h2 id="the-radiosity">The radiosity</h2>
 <p>Now it&rsquo;s the time to look up how to calculate indirect light. And like I mentioned in the early stages, I used radiosity method to calculate them. The reason why I choose it is, well, this was the only keyword I could search for.</p>
-<p>According to <a href="http://public.beuth-hochschule.de/~godberse/wiese/cga1/08_3Dglobal/sw/radiosity/radiosity_all.htm">this slide</a>(see slide 5 in the page), the radiosity method has its basis in the theory of <strong>thermal radiation</strong>. So the theory is applied here to describe light energy.</p>
-<p>Anyway, the important part is its equation. And for the finite number of surface, the equation is:</p>
+<p>According to <a href="http://public.beuth-hochschule.de/~godberse/wiese/cga1/08_3Dglobal/sw/radiosity/radiosity_all.htm">the slide, Radiosity OverView</a>(see slide 5 in the page), the radiosity method has its basis in the theory of <strong>thermal radiation</strong>. So the theory applied here to describe light energy.</p>
+<p>Anyway, the important part is its equation. And for the finite number \(n\) of surface, the equation is:</p>
 <blockquote>
-<p>\(B _\rm{i} =\) \(E _\rm{i} + ρ _\rm{i} \sum _{j=1}^n\) \(F _\rm{ij}\) \(\cdot\) \(B _\rm{j}\)</p>
+<p>\(B _\rm{i} = \textit{E} _\rm{i} + ρ _\rm{i} \sum _{j=1}^n {\textit{B} _\rm{j} \cdot \textit{F} _\rm{ij}}\)</p>
 </blockquote>
 <p>where:<br>
 \(B _\rm{i} =\) radiosity of surface \(i\)<br>
@@ -592,7 +592,56 @@ Figure 09-1: Same as Figure09, but the bilinear filter applied.
 \(F _\rm{ij} =\) form factor of surface \(j\) relative to surface \(i\)</p>
 <p>As you see, the equation is recursive. Because the \(B _\rm{j}\) on the right side is the previous result of \(B _\rm{i}\).<br>
 Also, the \(B _\rm{i}\) would be the irradiance we&rsquo;ve been looking for.<br>
-And the case of \(E _\rm{i}\) and \(ρ _\rm{i}\), I could leave these as a constant value or sort of configurable one that depends on its surface material.</p>
+The case of \(E _\rm{i}\) and \(ρ _\rm{i}\), I could leave these as a constant value or sort of configurable one that depends on its surface material.<br>
+And there&rsquo;s one ne left which called <strong>form factor</strong>, \(F _\rm{ij}\). This stands for a relation between leaves and arrives energy. And the following equation shows how the form factor should be calculated.</p>
+<blockquote>
+<p>\(F _\rm{ij} = \frac{1}{\textit{A} _\rm{i}} \cdot \int _{\textit{A} _\rm{i}} {\int _{\textit{A} _\rm{j}} {\frac{\cos\theta _\rm{i} \cdot \cos\theta _\rm{j}}{\pi r^2} \textit{dA} _\rm{i} \textit{dA} _\rm{j}}}\)<br>
+<em>(It will be better to see slide 7 of <a href="http://public.beuth-hochschule.de/~godberse/wiese/cga1/08_3Dglobal/sw/radiosity/radiosity_all.htm">this page</a>)</em></p>
+</blockquote>
+<p>Each letter is:<br>
+\(A _\rm{i}\) and \(A _\rm{j}\) are areas of surface \(i\) and surface \(j\).<br>
+\(\theta _\rm{i}\) is the angle between surface \(i\) normal and a direction towards surface \(i\) to surface \(j\).<br>
+\(\theta _\rm{j}\) is the angle between surface \(j\) normal and a direction towards surface \(j\) to surface \(i\).<br>
+The \(r\) is the distance between surface \(j\) and surface \(i\).</p>
+<p>And based on the equation, I wrote a code like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> sample : samplePoints){
+    sample.totalLight <span style="color:#f92672">=</span> directLightOfCurrentSample() <span style="color:#f92672">+</span> sample.emissivity;
+    sample.emitLight <span style="color:#f92672">=</span> sample.totalLight;
+}
+
+<span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">unsigned</span> bounce <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; bounce <span style="color:#f92672">&lt;</span> bounceCount; <span style="color:#f92672">++</span>bounce){
+    Color totalEmitOfBounce <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+
+    <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> iSample : samplePoints){
+        Color totalIncidentOfSample <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+
+        <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> jSample : samplePoints){
+            <span style="color:#66d9ef">if</span>(iSample <span style="color:#f92672">==</span> jSample)
+                <span style="color:#66d9ef">continue</span>;
+
+            Color addLight <span style="color:#f92672">=</span> jSample.emitLight <span style="color:#f92672">*</span> jSample.reflectivity;
+            addLight <span style="color:#f92672">*=</span> calFormFactor(iSample, jSample);
+
+            totalIncidentOfSample <span style="color:#f92672">+=</span> addLight;
+        }
+
+        iSample.totalLight <span style="color:#f92672">+=</span> totalIncidentOfSample;
+        iSample.emitLight <span style="color:#f92672">=</span> totalIncidentOfSample;
+
+        totalEmitOfBounce <span style="color:#f92672">+=</span> totalIncidentOfSample;
+    }
+
+    <span style="color:#66d9ef">if</span>(isTooSmall(totalEmitOfBounce))
+        <span style="color:#66d9ef">break</span>;
+}
+</code></pre></div><p>Just like the equation, the <strong>totalLight</strong> of sample point will be calculated with the previous result of radiosity.<br>
+And the <strong>bounceCount</strong> is configurable, by increasing <strong>bounceCount</strong>, the final result will be accurate. The reason why I left this as configurable because light bouncing needs a bunch of calculation. It&rsquo;s literally too slow. Moreover, in most cases, there are only tiny differences after 3 or 4 times of bouncing calculation.<br>
+The <strong>calFormFactor(&hellip;)</strong> will return 0.0 to 1.0 of value, hence the <strong>totalEmitOfBounce</strong> will keep decreasing in every iteration of bouncing. As a result, when <strong>totalEmitOfBounce</strong> nearly closed to zero, future bouncing iteration will be cancelled.</p>
+<p>Apparently, there are plenty of ways to implement the radiosity method for lightmap baking, but I could start off with two different ways.</p>
+<br/><br/>
+<h3 id="sample-point-to-sample-point">Sample point to sample point</h3>
+<br/><br/>
+<h3 id="hemicube-form-factor">Hemicube form factor</h3>
 <br/><br/>
 <h2 id="references">References</h2>
 <ul>
