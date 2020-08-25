@@ -198,7 +198,7 @@ Figure 02: A flow of finding centroids. The yellow squares are current searching
 </div>
 <br/><br/></p>
 <p>Also, I remembered <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm</a> to find out &lsquo;generated polygon&rsquo; between intersected two polygons.<br>
-On the article, they mentioned that if subject polygon is concave, the output &lsquo;generated polygon&rsquo; may have extraneous lines. Since it has only one vertex list output. So somehow this may cause a problem to find out centroid depending on an algorithm.<br>
+On the article, they mentioned that if subject polygon is concave, the output &lsquo;generated polygon&rsquo; may have extraneous lines. Since it has only one vertex list output.<br>
 But luckily, subject polygon here always be a triangle, so it will never be concaved.</p>
 <p>And here is C++ like pseudo-code of my idea. I used <a href="https://software.intel.com/en-us/tbb">Intel® TBB library</a>. Which allowed me easily parallelize my code. Because it has its own task scheduler.<br>
 If you&rsquo;re working with <strong>MVSC</strong>, you don&rsquo;t necessarily have to integrate <strong>TBB</strong>. As an alternate, you can use a built-in library called <a href="https://docs.microsoft.com/cpp/parallel/concrt/parallel-patterns-library-ppl">PPL</a>(since <strong>MVSC 2010</strong>) which has almost the same interface with <strong>TBB</strong>.</p>
@@ -635,9 +635,9 @@ The \(r\) is the distance between surface \(j\) and surface \(i\).</p>
         <span style="color:#66d9ef">break</span>;
 }
 </code></pre></div><p>Just like the equation, the <strong>totalLight</strong> of sample point will be calculated with the previous result of radiosity.<br>
-And the <strong>bounceCount</strong> is configurable, by increasing <strong>bounceCount</strong>, the final result will be accurate. The reason why I left this as configurable because light bouncing needs a bunch of calculation. It&rsquo;s literally too slow. Moreover, in most cases, there are only tiny differences after 3 or 4 times of bouncing calculation.<br>
+And the <strong>bounceCount</strong> is configurable value. By increasing <strong>bounceCount</strong>, the final result will be accurate. The reason why I left this as configurable because light bouncing needs a bunch of calculation. It&rsquo;s literally too slow. Moreover, in most cases, there are only tiny differences after 3 or 4 times of bouncing calculation.<br>
 The <strong>calFormFactor(&hellip;)</strong> will return 0.0 to 1.0 of value, hence the <strong>totalEmitOfBounce</strong> will keep decreasing in every iteration of bouncing. As a result, when <strong>totalEmitOfBounce</strong> nearly closed to zero, future bouncing iteration will be cancelled.</p>
-<p>Apparently, there are plenty of ways to implement the radiosity method for lightmap baking, but I could start off with two different ways.</p>
+<p>Apparently, there are plenty of ways to implement the radiosity method for lightmap baking, but I could start off with two different ways. The most biggest difference of two is how to calculate form factor. And I&rsquo;m going to review both ways. But before start, each way have pros and cons. So I can&rsquo;t say which is better.</p>
 <br/><br/>
 <h3 id="sample-point-to-sample-point">Sample point to sample point</h3>
 <br/><br/>
