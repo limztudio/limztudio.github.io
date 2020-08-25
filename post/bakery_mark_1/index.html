@@ -637,9 +637,11 @@ The \(r\) is the distance between surface \(j\) and surface \(i\).</p>
 </code></pre></div><p>Just like the equation, the <strong>totalLight</strong> of sample point will be calculated with the previous result of radiosity.<br>
 And the <strong>bounceCount</strong> is configurable value. By increasing <strong>bounceCount</strong>, the final result will be accurate. The reason why I left this as configurable because light bouncing needs a bunch of calculation. It&rsquo;s literally too slow. Moreover, in most cases, there are only tiny differences after 3 or 4 times of bouncing calculation.<br>
 The <strong>calFormFactor(&hellip;)</strong> will return 0.0 to 1.0 of value, hence the <strong>totalEmitOfBounce</strong> will keep decreasing in every iteration of bouncing. As a result, when <strong>totalEmitOfBounce</strong> nearly closed to zero, future bouncing iteration will be cancelled.</p>
-<p>Apparently, there are plenty of ways to implement the radiosity method for lightmap baking, but I could start off with two different ways. The most biggest difference of two is how to calculate form factor. And I&rsquo;m going to review both ways. But before start, each way have pros and cons. So I can&rsquo;t say which is better.</p>
+<p>Apparently, there are plenty of ways to implement the radiosity method for lightmap baking, but I could start off with two different ways. The most biggest difference of two is how to calculate the form factor. And I&rsquo;m going to review both ways. But before start, each way have pros and cons. So I can&rsquo;t say which is better.</p>
 <br/><br/>
 <h3 id="sample-point-to-sample-point">Sample point to sample point</h3>
+<p>The first way is visiting every sample point per every sample point. What I&rsquo;m saying is, <em>guess we have a table which contains every sample point in a scene. Then we&rsquo;ll iterate all the sample point in the table. While iterating each sample point, we will also iterate all another sample points per each and calculate form factor.</em><br>
+As you see, it will take \(O(n^2)\) of time complexity where \(n\) stands for <em>count of sample points</em>.</p>
 <br/><br/>
 <h3 id="hemicube-form-factor">Hemicube form factor</h3>
 <br/><br/>
