@@ -420,14 +420,14 @@ Figure 05: 3 triangles are placed in one pixel(see left illustration). Magenta a
 <ol>
 <li>Calculate area of each polygon whose centroid in 3D space is each sample point.</li>
 <li>Add all the area in the current pixel. And divide each area by this summation(This is &lsquo;Participation rate&rsquo; which is the same one above).</li>
-<li>Multiply position and normal of each sample point by each &lsquo;Participation rate&rsquo;. Then sum each position and normal separately.
-Also, don&rsquo;t forget to normalize the &lsquo;summation of normals&rsquo;.</li>
-<li>Shoot ray at the &lsquo;summation of positions&rsquo; along &lsquo;summation of normals&rsquo; direction. And test if there are any intersections between polygons which are belonging with current pixel.</li>
+<li>Multiply position and normal direction of each sample point by each &lsquo;Participation rate&rsquo;. Then sum each position and normal direction separately.
+Also, don&rsquo;t forget to normalize the &lsquo;summation of normal directions&rsquo;.</li>
+<li>Shoot ray at the &lsquo;summation of positions&rsquo; along &lsquo;summation of normal directions&rsquo;. And test if there are any intersections between polygons which are belonging with current pixel.</li>
 <li>Find farthest intersection. That is new sample point position of current pixel.</li>
-<li>If nothing intersected, Shoot ray at the same point along negative &lsquo;summation of normals&rsquo; direction. And samely, test if there are any intersections between polygons which are belonging with current pixel.</li>
+<li>If nothing intersected, Shoot ray at the same point along negative &lsquo;summation of normal directions&rsquo; direction. And samely, test if there are any intersections between polygons which are belonging with current pixel.</li>
 <li>Find nearest intersection. That is new sample point position of current pixel.</li>
 <li>If nothing intersected still, &lsquo;summation of positions&rsquo; is the new sample point position of current pixel.</li>
-<li>Calculate irradiance with &lsquo;summation of normals&rsquo; at new sample point position.</li>
+<li>Calculate irradiance with &lsquo;summation of normal directions&rsquo; at new sample point position.</li>
 </ol>
 </blockquote>
 <p>
@@ -488,7 +488,8 @@ Code will check the occlusion between each light and each sample point. Then if 
         sample.totalLight <span style="color:#f92672">+=</span> bOccluded <span style="color:#f92672">?</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">:</span> light.calculateColorOf(sample);
     }
 }
-</code></pre></div><p>And <em>Figure 07</em> is a result of the code. I placed a box on the ground. Only one directional light setup in the scene. In order to observe the clear result, I didn&rsquo;t use texture filter to render the lightmap.</p>
+</code></pre></div><br/><br/>
+<p>And <em>Figure 07</em> is a result of the code. I placed a box on the ground. Only one directional light setup in the scene. In order to observe the clear result, I didn&rsquo;t use texture filter to render the lightmap.</p>
 <p>
 
 
@@ -600,8 +601,8 @@ And there&rsquo;s one ne left which called <strong>form factor</strong>, \(F _\r
 </blockquote>
 <p>Each letter is:<br>
 \(A _\rm{i}\) and \(A _\rm{j}\) are areas of surface \(i\) and surface \(j\).<br>
-\(\theta _\rm{i}\) is the angle between surface \(i\) normal and a direction towards surface \(i\) to surface \(j\).<br>
-\(\theta _\rm{j}\) is the angle between surface \(j\) normal and a direction towards surface \(j\) to surface \(i\).<br>
+\(\theta _\rm{i}\) is the angle between surface \(i\) normal direction and a direction towards surface \(i\) to surface \(j\).<br>
+\(\theta _\rm{j}\) is the angle between surface \(j\) normal direction and a direction towards surface \(j\) to surface \(i\).<br>
 The \(r\) is the distance between surface \(j\) and surface \(i\).</p>
 <p>And based on the equation, I wrote a code like this:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> sample : samplePoints){
@@ -635,13 +636,14 @@ The \(r\) is the distance between surface \(j\) and surface \(i\).</p>
         <span style="color:#66d9ef">break</span>;
 }
 </code></pre></div><p>Just like the equation, the <strong>totalLight</strong> of sample point will be calculated with the previous result of radiosity.<br>
-And the <strong>bounceCount</strong> is configurable value. By increasing <strong>bounceCount</strong>, the final result will be accurate. The reason why I left this as configurable because light bouncing needs a bunch of calculation. It&rsquo;s literally too slow. Moreover, in most cases, there are only tiny differences after 3 or 4 times of bouncing calculation.<br>
+And the <strong>bounceCount</strong> is a configurable value. By increasing <strong>bounceCount</strong>, the final result will be accurate. The reason why I left this as configurable because light bouncing needs a bunch of calculation. It&rsquo;s literally too slow. Moreover, in most cases, there are only tiny differences after 3 or 4 times of bouncing calculation.<br>
 The <strong>calFormFactor(&hellip;)</strong> will return 0.0 to 1.0 of value, hence the <strong>totalEmitOfBounce</strong> will keep decreasing in every iteration of bouncing. As a result, when <strong>totalEmitOfBounce</strong> nearly closed to zero, future bouncing iteration will be cancelled.</p>
-<p>Apparently, there are plenty of ways to implement the radiosity method for lightmap baking, but I could start off with two different ways. The most biggest difference of two is how to calculate the form factor. And I&rsquo;m going to review both ways. But before start, each way have pros and cons. So I can&rsquo;t say which is better.</p>
+<p>Apparently, there are plenty of ways to implement the radiosity method for lightmap baking, but I could start off with two different ways. The biggest difference between two is how to calculate the form factor. And I&rsquo;m going to review both ways. But before the start, each way have pros and cons. So I can&rsquo;t say which is better.</p>
 <br/><br/>
 <h3 id="sample-point-to-sample-point">Sample point to sample point</h3>
-<p>The first way is visiting every sample point per every sample point. What I&rsquo;m saying is, <em>guess we have a table which contains every sample point in a scene. Then we&rsquo;ll iterate all the sample point in the table. While iterating each sample point, we will also iterate all another sample points per each and calculate form factor.</em><br>
-As you see, it will take \(O(n^2)\) of time complexity where \(n\) stands for <em>count of sample points</em>.</p>
+<p>The first way is visiting every sample points per every other sample points. What I&rsquo;m saying is, <em>guess we have a table which contains every sample point in a scene. Then we&rsquo;ll iterate all the sample point in the table. While iterating each sample point, we will also iterate all another sample points per each and calculate form factor with them.</em></p>
+<p>As you see, it will take \(O(n^2)\) of time complexity where \(n\) stands for <em>the count of sample points</em>. But in general, it&rsquo;s quite hard to find the case that one sample point is related to every other sample points in the scene. Because the equation shows when an angle of sample point normal direction and the direction from the sample point to another has a value which smaller than 90° is the only case the form factor is valid. In other words, if two sample points are not in range of each other&rsquo;s hemisphere(their normal direction oriented) boundary, they don&rsquo;t need to be related.<br>
+Also, if two sample points are too far away, it&rsquo;s okay to be ignored since the equation says form factor divided by \(r^2\).</p>
 <br/><br/>
 <h3 id="hemicube-form-factor">Hemicube form factor</h3>
 <br/><br/>
