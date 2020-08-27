@@ -644,6 +644,7 @@ The <strong>calFormFactor(&hellip;)</strong> will return 0.0 to 1.0 of value, he
 <p>The first way is visiting every sample points per every other sample points. What I&rsquo;m saying is, <em>guess we have a table which contains every sample point in a scene. Then we&rsquo;ll iterate all the sample point in the table. While iterating each sample point, we will also iterate all another sample points per each and calculate form factor with them.</em></p>
 <p>As you see, it will take \(O(n^2)\) of time complexity where \(n\) stands for <em>the count of sample points</em>. But in general, it&rsquo;s quite hard to find the case that one sample point is related to every other sample points in the scene. Because the equation shows when an angle of sample point normal direction and the direction from the sample point to another has a value which smaller than 90° is the only case the form factor is valid. In other words, if two sample points are not in range of each other&rsquo;s hemisphere(their normal direction oriented) boundary, they don&rsquo;t need to be related.<br>
 Also, if two sample points are too far away, it&rsquo;s okay to be ignored since the equation says form factor divided by \(r^2\).</p>
+<p>And these are what I&rsquo;ve thought to decrease the calculation time. I&rsquo;ve better to think of KD-Tree or something like that.</p>
 <br/><br/>
 <h3 id="hemicube-form-factor">Hemicube form factor</h3>
 <br/><br/>
@@ -673,11 +674,6 @@ Also, if two sample points are too far away, it&rsquo;s okay to be ignored since
 </main>
 
 
-<nav class="post-nav flex">
-	<div class="post-nav__item post-nav__item--next">
-		<a class="post-nav__link" href="/post/bakery_mark_1_problems/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">My first lightmap baker: Problems</p></a>
-	</div>
-</nav>
 <script src="https://utteranc.es/client.js"
         repo="limztudio/blog_comment"
         issue-term="pathname"

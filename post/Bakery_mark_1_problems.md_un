@@ -1,0 +1,57 @@
+---
+title: "My first lightmap baker: Problems"
+date: 2020-07-23T21:58:33+09:00
+description: ""
+draft: false
+sidebar: right
+categories:
+  - "Developement"
+tags:
+  - "Developement"
+  - "Rendering"
+  - "Radiosity"
+
+#menu: main
+
+lead: "Unsolved problems of Bakery. We will gonna deal with them and somehow we can have some hints for solution maybe?"
+comment: true
+authorbox: false
+toc: false
+mathjax: true
+---
+
+
+This article is continued from [My first lightmap baker: Bakery](../bakery_mark_1). So I highly recommend you to read them first before reading this page.
+
+Before begin,
+
+
+{{<newline>}}
+## The 'Seam's
+
+pewpew
+
+
+{{<newline>}}
+## Light bleeding: Stop hiding! You tiny little...
+
+pewpew
+
+
+{{<newline>}}
+## Grid. Coming out of the dark.
+
+pewpew
+
+
+{{<newline>}}
+## Way Too Slow
+
+pewpew
+
+
+{{<newline>}}
+## Fundamental problem
+
+pewpew
+
