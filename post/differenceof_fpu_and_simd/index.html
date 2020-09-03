@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Different result between FPU and SIMD - LimZtudio</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<meta property="og:title" content="Different result between FPU and SIMD" />
+<meta property="og:description" content="About two years ago, I had a chance to migrate x86 based project to x64 project.
+And there are not many works I had to do. Really. Because it was just a simple tool, so all I needed to do was switch the architecture of the platform, and fix some warnings come from different size of size_t.
+It seems everything works fine, yet I found something works differently than before." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://limztudio.github.io/post/differenceof_fpu_and_simd/" />
+<meta property="article:published_time" content="2020-08-30T17:24:33+09:00" />
+<meta property="article:modified_time" content="2020-08-30T17:24:33+09:00" />
+
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="LimZtudio" rel="home">
+				<div class="logo__title">LimZtudio</div>
+				<div class="logo__tagline">Render-Land</div>
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About me</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Different result between FPU and SIMD</h1>
+			<p class="post__lead">Something unexpected can happen when migrating legacy project about floating-point calculation.</p>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2020-08-30T17:24:33&#43;09:00">2020-08-30</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/developement/" rel="category">Developement</a>
+	</span>
+</div></div>
+		</header><div class="content post__content clearfix">
+			<p>About two years ago, I had a chance to migrate x86 based project to x64 project.<br>
+And there are not many works I had to do. Really. Because it was just a simple tool, so all I needed to do was switch the architecture of the platform, and fix some warnings come from different size of <em>size_t</em>.</p>
+<p>It seems everything works fine, yet I found something works differently than before.<br>
+I quite struggled to trace the error in that there is no difference in C++ code between x86 and x64.</p>
+<p>Anyway, I finally got where the error come from in a dissambly mode. But let&rsquo;s see the C++ code first that error occurred.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;cstdio&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(){
+    <span style="color:#66d9ef">volatile</span> <span style="color:#66d9ef">float</span> value <span style="color:#f92672">=</span> <span style="color:#ae81ff">2048.f</span>;
+    <span style="color:#66d9ef">volatile</span> <span style="color:#66d9ef">float</span> episilon <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0001f</span>;
+
+    printf(((value <span style="color:#f92672">+</span> episilon) <span style="color:#f92672">&gt;</span> value) <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;true&#34;</span> <span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;false&#34;</span>);
+
+    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+}
+</code></pre></div><p>On x86, it printed <em>true</em>, but printed <em>false</em> on x64.<br>
+And the reason why I declared every value as <em>volatile</em>, it&rsquo;s just for avoiding constantize value by compiler optimization.</p>
+<p>Alright. Then let&rsquo;s have a look how the x86 compiler made the assembly code.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#a6e22e">...</span>
+<span style="color:#a6e22e">fld</span> <span style="color:#66d9ef">dword</span> <span style="color:#66d9ef">ptr</span> [<span style="color:#66d9ef">episilon</span>]
+<span style="color:#a6e22e">fadd</span> <span style="color:#66d9ef">dword</span> <span style="color:#66d9ef">ptr</span> [<span style="color:#66d9ef">value</span>]
+<span style="color:#a6e22e">fld</span> <span style="color:#66d9ef">dword</span> <span style="color:#66d9ef">ptr</span> [<span style="color:#66d9ef">value</span>]
+<span style="color:#a6e22e">fcompp</span>
+<span style="color:#a6e22e">fnstsw</span> <span style="color:#66d9ef">ax</span>
+<span style="color:#a6e22e">test</span> <span style="color:#66d9ef">ah</span>, <span style="color:#ae81ff">5</span>
+<span style="color:#a6e22e">mov</span> <span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">offset</span> <span style="color:#66d9ef">string</span> <span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#66d9ef">true</span><span style="color:#960050;background-color:#1e0010">&#34;</span> (<span style="color:#ae81ff">0</span><span style="color:#66d9ef">BA2100h</span>)
+<span style="color:#a6e22e">jnp</span> <span style="color:#66d9ef">main</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">34</span><span style="color:#66d9ef">h</span> (<span style="color:#ae81ff">0</span><span style="color:#66d9ef">BA1074h</span>)
+<span style="color:#a6e22e">mov</span> <span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">offset</span> <span style="color:#66d9ef">string</span> <span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#66d9ef">false</span><span style="color:#960050;background-color:#1e0010">&#34;</span> (<span style="color:#ae81ff">0</span><span style="color:#66d9ef">BA2108h</span>)
+<span style="color:#a6e22e">push</span> <span style="color:#66d9ef">eax</span>
+<span style="color:#a6e22e">call</span> <span style="color:#66d9ef">printf</span> (<span style="color:#ae81ff">0</span><span style="color:#66d9ef">BA1010h</span>)
+<span style="color:#a6e22e">...</span>
+</code></pre></div><p>So, the first is push <strong>episilon</strong> onto FPU register stack. Then add <strong>value</strong> to the top of the stack. Therefore, <strong>value + episilon</strong> is stored on top.<br>
+Next, push <strong>value</strong> onto the stack. And through <em>fcompp</em>, compare <em>ST[0](<strong>value</strong>)</em> with <em>ST[1](<strong>value + episilon</strong>)</em> and pop register stack twice. Depending on the result of the instruction, <em>C0</em>, <em>C2</em> and <em>C3</em> of the FPU status word will be changed.<br>
+The instruction <em>fnstsw</em> will store FPU status word into its destination. On the code, the register <strong>ax</strong> has <strong>0100h</strong> and this is the result when condition <em><strong>ST[0] &lt; ST[1]</strong></em> is <em>true</em>.</p>
+<p>Okay. Then how about x64 compiled assembly code look like? Unlike x86 assembly, x64 compiler uses SSE2 by default. Probably, every x64 processor supports SSE2 and this is faster than FPU.</p>
+<p>Anyway, see how the x64 code looks like.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#a6e22e">...</span>
+<span style="color:#a6e22e">lea</span> <span style="color:#66d9ef">rax</span>, [<span style="color:#66d9ef">string</span> <span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#66d9ef">true</span><span style="color:#960050;background-color:#1e0010">&#34;</span> (<span style="color:#ae81ff">07</span><span style="color:#66d9ef">FF7F46B2240h</span>)]
+<span style="color:#a6e22e">lea</span> <span style="color:#66d9ef">rcx</span>, [<span style="color:#66d9ef">string</span> <span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#66d9ef">false</span><span style="color:#960050;background-color:#1e0010">&#34;</span> (<span style="color:#ae81ff">07</span><span style="color:#66d9ef">FF7F46B2248h</span>)]
+<span style="color:#a6e22e">movss</span> <span style="color:#66d9ef">xmm2</span>, <span style="color:#66d9ef">dword</span> <span style="color:#66d9ef">ptr</span> [<span style="color:#66d9ef">episilon</span>]
+<span style="color:#a6e22e">movss</span> <span style="color:#66d9ef">xmm0</span>, <span style="color:#66d9ef">dword</span> <span style="color:#66d9ef">ptr</span> [<span style="color:#66d9ef">value</span>]
+<span style="color:#a6e22e">movss</span> <span style="color:#66d9ef">xmm1</span>, <span style="color:#66d9ef">dword</span> <span style="color:#66d9ef">ptr</span> [<span style="color:#66d9ef">value</span>]
+<span style="color:#a6e22e">addss</span> <span style="color:#66d9ef">xmm2</span>, <span style="color:#66d9ef">xmm0</span>
+<span style="color:#a6e22e">comiss</span> <span style="color:#66d9ef">xmm2</span>, <span style="color:#66d9ef">xmm1</span>
+<span style="color:#a6e22e">cmova</span> <span style="color:#66d9ef">rcx</span>, <span style="color:#66d9ef">rax</span>
+<span style="color:#a6e22e">call</span> <span style="color:#66d9ef">printf</span> (<span style="color:#ae81ff">07</span><span style="color:#66d9ef">FF7F46B1010h</span>)
+<span style="color:#a6e22e">...</span>
+</code></pre></div><p>As you see, it&rsquo;s nothing so special.<br>
+But one I noticed is, after executing <em>addss</em> instruction on the code, <strong>xmm2</strong> has <strong>2048.0</strong>. And <strong>xmm1</strong> also has <strong>2048.0</strong>, the result is <em>false</em>.<br>
+Logically, this is the right result. Because <strong>2048.0001</strong> is too big number as single precision floating point since it has not enough mantissa bits.</p>
+<p>Then back to the x86 code, its result was <em>true</em>. That means FPU compared their value with a higher precision floating point.<br>
+So, while I was searching about FPU, I found <a href="https://c9x.me/x86/html/file_module_x86_id_100.html">an interesting description of <em>fld</em> instruction</a>.</p>
+<p>Which explained,</p>
+<blockquote>
+<p><em>If the source operand is in single-precision or double-precision floating-point format, it is automatically converted to the double extended-precision floating-point format before being pushed on the stack.</em></p>
+</blockquote>
+<p>Now, everything got clear.<br>
+On x86, every floating point(regardless of their precision) are automatically converted to 80 bits of extended precision floating point to be calculated by FPU.<br>
+But x64 on the other hand, as I declared <em>float</em> in the C++ code, it maintained single precision in every operation of SIMD.</p>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item"><a class="tags__link btn" href="/tags/developement/" rel="tag">Developement</a></li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/bakery_mark_1/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">My first lightmap baker: Bakery</p></a>
+	</div>
+</nav>
+<script src="https://utteranc.es/client.js"
+        repo="limztudio/blog_comment"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-categories widget">
+	<h4 class="widget__title">Categories</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/developement/">Developement</a>
+			</li>
+		</ul>
+	</div>
+</div>
+<div class="widget-taglist widget">
+	<h4 class="widget__title">Tags</h4>
+	<div class="widget__content">
+		<a class="widget-taglist__link widget__link btn" href="/tags/developement/" title="Developement">Developement</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/radiosity/" title="Radiosity">Radiosity</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rendering/" title="Rendering">Rendering</a>
+	</div>
+</div>
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:limztudio@gmail.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>limztudio@gmail.com</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/limztudio" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 LimZtudio.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</body>
+</html>
