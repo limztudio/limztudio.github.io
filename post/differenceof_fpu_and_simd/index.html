@@ -122,7 +122,7 @@ The instruction <em>fnstsw</em> will store FPU status word into its destination.
 <span style="color:#a6e22e">...</span>
 </code></pre></div><p>As you see, it&rsquo;s nothing so special.<br>
 But one I noticed is, after executing <em>addss</em> instruction on the code, <strong>xmm2</strong> has <strong>2048.0</strong>. And <strong>xmm1</strong> also has <strong>2048.0</strong>, the result is <em>false</em>.<br>
-Logically, this is the right result. Because <strong>2048.0001</strong> is too big number as single precision floating point since it has not enough mantissa bits.</p>
+Logically, this is the right result. Because <strong>2048.0001</strong> is too long number as single precision floating point since it has not enough mantissa bits.</p>
 <p>Then back to the x86 code, its result was <em>true</em>. That means FPU compared their value with a higher precision floating point.<br>
 So I started to searching about FPU and I found <a href="https://c9x.me/x86/html/file_module_x86_id_100.html">an interesting description of <em>fld</em> instruction</a>.</p>
 <p>Which explained,</p>
