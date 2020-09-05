@@ -60,7 +60,7 @@ It seems everything works fine, yet I found something works differently than bef
 	<article class="post">
 		<header class="post__header">
 			<h1 class="post__title">Different result between FPU and SIMD</h1>
-			<p class="post__lead">Something unexpected can happen when migrating legacy project about floating-point calculation.</p>
+			<p class="post__lead">Something unexpected can happen when migrating legacy project about floating-point calculation...</p>
 			<div class="post__meta meta">
 <div class="meta__item-datetime meta__item">
 	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
@@ -124,14 +124,16 @@ The instruction <em>fnstsw</em> will store FPU status word into its destination.
 But one I noticed is, after executing <em>addss</em> instruction on the code, <strong>xmm2</strong> has <strong>2048.0</strong>. And <strong>xmm1</strong> also has <strong>2048.0</strong>, the result is <em>false</em>.<br>
 Logically, this is the right result. Because <strong>2048.0001</strong> is too big number as single precision floating point since it has not enough mantissa bits.</p>
 <p>Then back to the x86 code, its result was <em>true</em>. That means FPU compared their value with a higher precision floating point.<br>
-So, while I was searching about FPU, I found <a href="https://c9x.me/x86/html/file_module_x86_id_100.html">an interesting description of <em>fld</em> instruction</a>.</p>
+So I started to searching about FPU and I found <a href="https://c9x.me/x86/html/file_module_x86_id_100.html">an interesting description of <em>fld</em> instruction</a>.</p>
 <p>Which explained,</p>
 <blockquote>
 <p><em>If the source operand is in single-precision or double-precision floating-point format, it is automatically converted to the double extended-precision floating-point format before being pushed on the stack.</em></p>
 </blockquote>
 <p>Now, everything got clear.<br>
 On x86, every floating point(regardless of their precision) are automatically converted to 80 bits of extended precision floating point to be calculated by FPU.<br>
-But x64 on the other hand, as I declared <em>float</em> in the C++ code, it maintained single precision in every operation of SIMD.
+But x64 on the other hand, as I declared <em>float</em> in the C++ code, it maintained single precision in every operation of SIMD.</p>
+<p>So, if you&rsquo;re planning to switch FPU to SIMD of your legacy project, make sure to notice the result of floating point will be changed.</p>
+<p>And by the way, On <em>Visual Studio 2019</em>, it uses SSE2 by default even with x86. But you can still use the legacy FPU by adding <em>/arch:IA32</em> command line.
 <br/><br/></p>
 
 		</div>
