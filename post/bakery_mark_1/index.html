@@ -149,7 +149,7 @@ But in my case, irradiance needed to be calculated in every texel of each object
 
 
 <div style="text-align: center; font-style: italic;">
-Figure 01: A flow of finding sample points in 2D(UV) space. The green points are each of **vertex on pixel**. The red squares are intersections. And the black points are the centroids to be calculated by sample point on 3D space.
+Figure 01: A flow of finding sample points in 2D(UV) space. The green points are each of &#39;vertex on pixel&#39;. The red squares are intersections. And the black points are the centroids to be calculated by sample point on 3D space.
 </div>
 <br/><br/></p>
 <p>Then next I thought was how do I come up with an algorithm to find out these centroids on the UV space.<br>
@@ -620,10 +620,22 @@ The \(r\) is the distance between surface \(j\) and surface \(i\).</p>
             <span style="color:#66d9ef">if</span>(iSample <span style="color:#f92672">==</span> jSample)
                 <span style="color:#66d9ef">continue</span>;
 
-            Color addLight <span style="color:#f92672">=</span> jSample.emitLight <span style="color:#f92672">*</span> jSample.reflectivity;
-            addLight <span style="color:#f92672">*=</span> calFormFactor(iSample, jSample);
+            Ray rayBetween <span style="color:#f92672">=</span> calculateRay(iSample, jSample);
 
-            totalIncidentOfSample <span style="color:#f92672">+=</span> addLight;
+            <span style="color:#66d9ef">bool</span> bOccluded <span style="color:#f92672">=</span> false;
+            <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> object : objects){
+                <span style="color:#66d9ef">if</span>(object.intersect(rayBetween)){
+                    bOccluded <span style="color:#f92672">=</span> true;
+                    <span style="color:#66d9ef">break</span>;
+                }
+            }
+
+            <span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span>bOccluded){
+                Color addLight <span style="color:#f92672">=</span> jSample.emitLight <span style="color:#f92672">*</span> jSample.reflectivity;
+                addLight <span style="color:#f92672">*=</span> calFormFactor(iSample, jSample);
+
+                totalIncidentOfSample <span style="color:#f92672">+=</span> addLight;
+            }
         }
 
         iSample.totalLight <span style="color:#f92672">+=</span> totalIncidentOfSample;
@@ -637,6 +649,7 @@ The \(r\) is the distance between surface \(j\) and surface \(i\).</p>
 }
 </code></pre></div><p>Just like the equation, the <strong>totalLight</strong> of sample point will be calculated with the previous result of radiosity.<br>
 And the <strong>bounceCount</strong> is a configurable value. By increasing <strong>bounceCount</strong>, the final result will be accurate. The reason why I left this as configurable because light bouncing needs a bunch of calculation. It&rsquo;s literally too slow. Moreover, in most cases, there are only tiny differences after 3 or 4 times of bouncing calculation.<br>
+Also, if something exists between <strong>iSample</strong> and <strong>jSample</strong>, that means, there is no incident light from <strong>jSample</strong> in terms of <strong>iSample</strong> on the current level of the bounce.<br>
 The <strong>calFormFactor(&hellip;)</strong> will return 0.0 to 1.0 of value, hence the <strong>totalEmitOfBounce</strong> will keep decreasing in every iteration of bouncing. As a result, when <strong>totalEmitOfBounce</strong> nearly closed to zero, future bouncing iteration will be cancelled.</p>
 <p>Apparently, there are plenty of ways to implement the radiosity method for lightmap baking, but I could start off with two different ways. The biggest difference between two is how to calculate the form factor. And I&rsquo;m going to review both ways. But before the start, each way have pros and cons. So I can&rsquo;t say which is better.</p>
 <br/><br/>
@@ -644,7 +657,9 @@ The <strong>calFormFactor(&hellip;)</strong> will return 0.0 to 1.0 of value, he
 <p>The first way is visiting every sample points per every other sample points. What I&rsquo;m saying is, <em>guess we have a table which contains every sample point in a scene. Then we&rsquo;ll iterate all the sample point in the table. While iterating each sample point, we will also iterate all another sample points per each and calculate form factor with them.</em></p>
 <p>As you see, it will take \(O(n^2)\) of time complexity where \(n\) stands for <em>the count of sample points</em>. But in general, it&rsquo;s quite hard to find the case that one sample point relates to every other sample points in the scene. Because the equation shows when an angle of sample point normal direction and the direction from the sample point to another has a value which smaller than 90° is the only case the form factor is valid. In other words, if two sample points are not in range of each other&rsquo;s hemisphere(their normal direction oriented) boundary, they don&rsquo;t need to be related.<br>
 Also, if two sample points are too far away, it&rsquo;s okay to be ignored since the equation says form factor divided by \(r^2\).</p>
-<p>And these are only work I&rsquo;ve applied to decrease the calculation time. I&rsquo;ve better to think of applying KD-Tree or something like that. To improve effectively.</p>
+<p>It might be the most accurate way as much as the slowest way to calculate radiosity. Because there is no trick or tweak for calculating form factor. The only thing that affects the quality of the calculation is the segment size of lightmap and this also strongly related to the calculation time.</p>
+<p>And this is what <em>vrad</em> of <em>an old Source engine</em> do. Of course on <em>vrad</em>, it contains lots more logics to optimize the calculation. The form factor calculation is the same as above, but it has a much faster algorithm to iterate each sample point.</p>
+<p>I tried to build my baker with this way for the first time. But then I realized it&rsquo;s way too slow to use. Guess if I applied <em>K-D Tree</em> or something like that, it could be better. Anyway, so I gave up and started to look for another way&hellip;</p>
 <br/><br/>
 <h3 id="hemicube-form-factor">Hemicube form factor</h3>
 <br/><br/>
