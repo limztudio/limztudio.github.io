@@ -118,7 +118,7 @@ I got a request that our game needs indirect lighting technique to make it looks
 And at that time, I don&rsquo;t have any knowledge of indirect light. So I had no idea where do I start it.<br>
 But thankfully, one of my bosses told me a keyword. <em><strong>Radiosity</strong></em>.</p>
 <p>So the first I read was <a href="https://en.wikipedia.org/wiki/Radiosity_(computer_graphics)">Radiosity on Wikipedia</a>. Then I could learn how it working. But still, needed something more detail or an actual example of implementation.<br>
-And I found <a href="https://mynameismjp.wordpress.com/2011/01/31/radiosity-dx11-style/">Radiosity, DX11 style</a>. It described how to calculate irradiance(On here, it&rsquo;s the result of radiosity calculation) in every vertex, and bake them using <a href="https://en.wikipedia.org/wiki/Spherical_harmonics">Spherical harmonics</a> to store in each vertex.<br>
+And I found <a href="https://therealmjp.github.io/posts/radiosity-dx11-style/">Radiosity, DX11 style</a>. It described how to calculate irradiance(On here, it&rsquo;s the result of radiosity calculation) in every vertex, and bake them using <a href="https://en.wikipedia.org/wiki/Spherical_harmonics">Spherical harmonics</a> to store in each vertex.<br>
 But in my case, irradiance needed to be calculated in every texel of each object. So I decided I better make it possible to store in texels first.</p>
 <br/><br/>
 <h2 id="find-sample-points">Find sample points</h2>
@@ -667,7 +667,7 @@ Also, if two sample points are too far away, it&rsquo;s okay to be ignored since
 <h2 id="references">References</h2>
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/Radiosity_(computer_graphics)">Radiosity on Wikipedia</a></li>
-<li><a href="https://mynameismjp.wordpress.com/2011/01/31/radiosity-dx11-style/">Radiosity, DX11 style, by MJP</a></li>
+<li><a href="https://therealmjp.github.io/posts/radiosity-dx11-style/">Radiosity, DX11 style, by MJP</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland–Hodgman algorithm on Wikipedia</a></li>
 <li><a href="https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates">Barycentric coordinates by Scratchapixel</a></li>
 <li><a href="https://web.archive.org/web/20160511192712/http://freespace.virgin.net/hugo.elias/radiosity/radiosity.htm">Radiosity, by Hugo Elias</a></li>
