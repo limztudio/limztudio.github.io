@@ -662,6 +662,24 @@ Also, if two sample points are too far away, it&rsquo;s okay to be ignored since
 <br/><br/>
 <h3 id="hemicube-form-factor">Hemicube form factor</h3>
 <p>So the second way I tried is <em>Hemicube form factor</em> which is well explained by <a href="https://web.archive.org/web/20160511192712/http://freespace.virgin.net/hugo.elias/radiosity/radiosity.htm">Hugo Elias</a>. And the biggest difference from the early way is, instead of gathering contactable sample points, it actually <strong>renders</strong> the scene on each sample point position.</p>
+<p>The reason why its name is <em><strong>Hemicube</strong> form factor</em>, because the renderer will render the scene on the sample point position towards each face of hemicube. See <em>Figure 10</em>.</p>
+<p>
+
+
+<div class="center">
+  <img
+    src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure10.gif"
+    alt="Figure10"
+    decoding="async"
+  />
+</div>
+
+
+<div style="text-align: center; font-style: italic;">
+Figure 10: Scene will be rendered along positive normal(blue), both direction of tangent(red) and both direction of binormal(green) direction.
+</div>
+<br/><br/></p>
+<p>Also, since it is <strong>Hemicube</strong>, tangent and binormal toward viewports will render only half size of normal towards viewport.</p>
 <br/><br/>
 <h2 id="references">References</h2>
 <ul>
