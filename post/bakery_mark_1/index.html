@@ -9,7 +9,7 @@
 	<meta name="description" content="">
 		<meta property="og:title" content="My first lightmap baker: Bakery" />
 <meta property="og:description" content="A simple Sponza Palace baked by my first lightmap baker. Only one directional light and Skylight(ambient light) setup in the scene. Looking pretty rough. 
- And the lightmap of the whole scene above. It has an information of both direct light and indirect light colour.  
+ And the lightmap of the whole scene above. It has an information of both direct light and indirect light colour.  
 It&rsquo;s been a couple of years. Since I started making my own lightmap baker.
 And before I start this article, I finished this project." />
 <meta property="og:type" content="article" />
@@ -55,6 +55,13 @@ And before I start this article, I finished this project." />
 				
 			</a>
 		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/portfolio/">
+				
+				<span class="menu__text">Portfolio</span>
+				
+			</a>
+		</li>
 	</ul>
 </nav>
 
@@ -79,11 +86,11 @@ And before I start this article, I finished this project." />
 
 
 <div class="center">
-  <img
+  <a href="https://github.com/limztudio/blog_radiosity_repo/raw/master/sponza.png"><img
     src="https://github.com/limztudio/blog_radiosity_repo/raw/master/sponza.png"
     alt="Sponza"
     decoding="async"
-  />
+  /></a>
 </div>
 
 
@@ -95,11 +102,11 @@ A simple Sponza Palace baked by my first lightmap baker. Only one directional li
 
 
 <div class="center">
-  <img
+  <a href="https://github.com/limztudio/blog_radiosity_repo/raw/master/sponza_lightmap.png"><img
     src="https://github.com/limztudio/blog_radiosity_repo/raw/master/sponza_lightmap.png"
     alt="Sponza_lightmap"
     decoding="async"
-  />
+  /></a>
 </div>
 
 
@@ -140,11 +147,11 @@ But in my case, irradiance needed to be calculated in every texel of each object
 
 
 <div class="center">
-  <img
+  <a href="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure01.gif"><img
     src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure01.gif"
     alt="Figure01"
     decoding="async"
-  />
+  /></a>
 </div>
 
 
@@ -185,11 +192,11 @@ And if the box has larger height than width, chop it in horizontal direction. Or
 
 
 <div class="center">
-  <img
+  <a href="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure02.gif"><img
     src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure02.gif"
     alt="Figure02"
     decoding="async"
-  />
+  /></a>
 </div>
 
 
@@ -353,11 +360,11 @@ And the edge also crosses the pixels. See <em>Figure 03</em>.</p>
 
 
 <div class="center">
-  <img
+  <a href="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure03.gif"><img
     src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure03.gif"
     alt="Figure03"
     decoding="async"
-  />
+  /></a>
 </div>
 
 
@@ -375,11 +382,11 @@ So if multiple irradiances are stored in one pixel, it will cause an unexpected(
 
 
 <div class="center">
-  <img
+  <a href="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure04.gif"><img
     src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure04.gif"
     alt="Figure04"
     decoding="async"
-  />
+  /></a>
 </div>
 
 
@@ -403,11 +410,11 @@ And that means, for sample points that each of their irradiances are needed to b
 
 
 <div class="center">
-  <img
+  <a href="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure05.gif"><img
     src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure05.gif"
     alt="Figure05"
     decoding="async"
-  />
+  /></a>
 </div>
 
 
@@ -434,11 +441,11 @@ Also, don&rsquo;t forget to normalize the <strong>summation of normal directions
 
 
 <div class="center">
-  <img
+  <a href="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure06.gif"><img
     src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure06.gif"
     alt="Figure06"
     decoding="async"
-  />
+  /></a>
 </div>
 
 
@@ -449,11 +456,11 @@ Figure 06: Magenta arrows are normal directions of each sample point. Red arrow 
 
 
 <div class="center">
-  <img
+  <a href="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure06_1.gif"><img
     src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure06_1.gif"
     alt="Figure06-1"
     decoding="async"
-  />
+  /></a>
 </div>
 
 
@@ -494,11 +501,11 @@ Code will check the occlusion between each light and each sample point. Then if 
 
 
 <div class="center">
-  <img
+  <a href="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure07.gif"><img
     src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure07.gif"
     alt="Figure07"
     decoding="async"
-  />
+  /></a>
 </div>
 
 
@@ -512,11 +519,11 @@ See how it looks different compare to non filtered one.</p>
 
 
 <div class="center">
-  <img
+  <a href="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure08.gif"><img
     src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure08.gif"
     alt="Figure08"
     decoding="async"
-  />
+  /></a>
 </div>
 
 
@@ -534,11 +541,11 @@ So, for the halfway solution, I divided each sample into small pieces but only f
 
 
 <div class="center">
-  <img
+  <a href="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure09.gif"><img
     src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure09.gif"
     alt="Figure09"
     decoding="async"
-  />
+  /></a>
 </div>
 
 
@@ -551,11 +558,11 @@ Figure 09: Image on the left is the result that calculates direct light on each 
 
 
 <div class="center">
-  <img
+  <a href="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure09_1.gif"><img
     src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure09_1.gif"
     alt="Figure09-1"
     decoding="async"
-  />
+  /></a>
 </div>
 
 
@@ -668,11 +675,11 @@ Also, if two sample points are too far away, it&rsquo;s okay to be ignored since
 
 
 <div class="center">
-  <img
+  <a href="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure10.gif"><img
     src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure10.gif"
     alt="Figure10"
     decoding="async"
-  />
+  /></a>
 </div>
 
 
@@ -690,11 +697,11 @@ And here is perspective projection matrix I used. I followed DirectX&rsquo;s way
 
 
 <div class="center">
-  <img
+  <a href="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure11.gif"><img
     src="https://github.com/limztudio/blog_radiosity_repo/raw/master/figure11.gif"
     alt="Figure11"
     decoding="async"
-  />
+  /></a>
 </div>
 
 

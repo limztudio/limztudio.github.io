@@ -25,7 +25,7 @@ It seems everything works fine, yet I found something works differently than bef
       
       <guid>https://limztudio.github.io/post/bakery_mark_1/</guid>
       <description>A simple Sponza Palace baked by my first lightmap baker. Only one directional light and Skylight(ambient light) setup in the scene. Looking pretty rough. 
- And the lightmap of the whole scene above. It has an information of both direct light and indirect light colour.  
+ And the lightmap of the whole scene above. It has an information of both direct light and indirect light colour.  
 It&amp;rsquo;s been a couple of years. Since I started making my own lightmap baker.
 And before I start this article, I finished this project.</description>
     </item>
@@ -40,6 +40,15 @@ And before I start this article, I finished this project.</description>
 So most of my posts will be related to programming stuff. Particularly in rendering.
 And since I&amp;rsquo;m not a good English speaker, some of(actually many of) articles will be awkward to read.
 But I will try my best to write it makes sense. And always welcome to point out of a wrong explanation or suggest a better expression.</description>
+    </item>
+    
+    <item>
+      <title>Portfolio</title>
+      <link>https://limztudio.github.io/portfolio/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://limztudio.github.io/portfolio/</guid>
+      <description>Redirecting to portfolio page&amp;hellip;</description>
     </item>
     
   </channel>

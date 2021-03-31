@@ -25,7 +25,7 @@ It seems everything works fine, yet I found something works differently than bef
       
       <guid>https://limztudio.github.io/post/bakery_mark_1/</guid>
       <description>A simple Sponza Palace baked by my first lightmap baker. Only one directional light and Skylight(ambient light) setup in the scene. Looking pretty rough. 
- And the lightmap of the whole scene above. It has an information of both direct light and indirect light colour.  
+ And the lightmap of the whole scene above. It has an information of both direct light and indirect light colour.  
 It&amp;rsquo;s been a couple of years. Since I started making my own lightmap baker.
 And before I start this article, I finished this project.</description>
     </item>
